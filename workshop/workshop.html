@@ -1,6 +1,5 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
-<html> <head>
-<title></title>
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   
@@ -13,13 +12,342 @@
   
   <!-- These are the styles you'll add to make the slides look great -->
   <link rel="stylesheet" href="css/styles.css" />
+  
+  <title>Deploying Map Services on Amazon Web Services</title>
 </head>
 <body>
-<h1></h1>
+  <header>
+    <h1>Deploying Map Services on Amazon Web Services</h1>
+    <nav>
+      <ul>
+        <li><button id="prev-btn" title="Previous slide">Previous Slide</button></li>
+        <li><span id="slide-number"></span>/<span id="slide-total"></span></li>
+        <li><button id="next-btn" title="Next Slide">Next Slide</button></li>
+      </ul>
+    </nav>
+  </header>
+  <div id="deck">
+    
+    <!-- Begin slides -->
+    <section>
+      <hgroup>
+        <h1>Deploying mapping services on AWS</h1>
+        <h2>What we will cover</h2>
+        <ul>
+          <li class="action"> Amazon Web Service basic concepts
+          <li class="action"> Amazon Web Service web and commandline tools
+          <li class="action"> Deploying map services on AWS
+          <li class="action"> Building a custom Amazon Machine Image (AMI)
+          <li class="action"> Configuring and deploying a load balance cluster
+        </ul>
+     </hgroup>
+   </section>
+   <section>
+      <hgroup>
+        <h1>Key Concepts</h1>
+      </hgroup>
+      <ul>
+        <li class="action">Availability Zone</li>
+        <li class="action">Region</li>
+        <li class="action">Access Identifiers</li>
+        <li class="action">Amazon Machine Image</li>
+        <li class="action">Elastic IP Address</li>
+        <li class="action">Security Group</li>
+        <li class="action">Access Control List</li>
+      </ul>
+    </section>
+    <section>
+      <hgroup>
+        <h1>Key Concepts</h1>
+        <h2>Availability Zones</h2>
+      </hgroup>
+        <p>An Availability Zone is a set of locations within an AWS Region. Each
+    zone is independent from other zones to protect from failure.</p>
+        <p>The Region name is part of the zone name, eg:</p>
+        <pre>us-east-1d</pre>
+        <p>This is one of the four zones in the us-east-1 Region</p>
+        <p>The mapping of a zone name to a location is different and consistent
+    for each AWS account. This means that we maybe both be in zone us-east-1d
+    but they maybe in different locations.</p>
+   </section>
+   <section>
+      <hgroup>
+        <h1>Key Concepts</h1>
+        <h2>Region</h2>
+      </hgroup>
+        <p>A Region is a set of Availability Zones in a geographic area. The AWS
+    Region name generally indicates the area that is covered. The curent regions
+    are:</p>
+        <ul>
+          <li>eu-west-1	ec2.eu-west-1.amazonaws.com is in Ireland</li>
+          <li>us-east-1	ec2.us-east-1.amazonaws.com is in Virginia</li>
+          <li>ap-northeast-1	ec2.ap-northeast-1.amazonaws.com is in Japan</li>
+          <li>us-west-1	ec2.us-west-1.amazonaws.com is in California</li>
+          <li>ap-southeast-1	ec2.ap-southeast-1.amazonaws.com Singapore</li>
+       </ul>
+   </section>
+   <section>
+     <hgroup>
+       <h1>Key Concepts</h1>
+       <h2>Access Identifiers</h2>
+     </hgroup>
+     <p>Access identifiers are used to identify accounts and create a
+    signature for each request made.</p>
+     <p> Indentifiers use public key encryption which come in pairs. The first
+    part is public and identifies a single AWS account. The second part is
+    private and used to create a signature for each request.</p>
+     <p>AWS provide two different sets of acces identifiers. The first is an
+    Access Key ID and a Secret Access Key. The second set is a X.509 certificate
+    with public and private keys.</p>
+     <p>In practice you will need your public key and the X.509 certificate to
+    perform most AWS tasks.</p>
+     <p>More information on access and identity management on <a href="http://docs.amazonwebservices.com/IAM/latest/GettingStartedGuide/">Amazon</a></p>
+   </section>
+   <section>
+     <hgroup>
+       <h1>Key Concepts</h1>
+       <h2>Amazon Machine Image (AMI)</h2>
+     </hgroup>
+     <p>Amazon Machine Image is a virtual instance of a server. It contains the
+    operating system and software that comprise you application(s).</p>
+     <p>You can use a pre-built AMI, customize it, and create a new AMI based on
+    your changes</p>
+     <p>Each AMI has a unique id, eg: <code>ami-63be790a</code></p>
+     <p>The AWS AMU catalog contains a complete list of public and registered AMIs.</p>
+   </section>
+   <section>
+     <hgroup>
+       <h1>Key Concepts</h1>
+       <h2>Instance</h2>
+     </hgroup>
+     <p>An instance is a running copy of an AMI. You can launch multiple
+    instances of the same AMI. They can be managed through the command-line or
+    using the AWS Management Console through a web browser.</p>
+     <p>More info on instance types on <a href="http://aws.amazon.com/ec2/#instance">Amazon</a></p>
+   </section>
+   <section>
+     <hgroup>
+       <h1>Key Concepts</h1>
+       <h2>Elastic IP Address</h2>
+     </hgroup>
+     <p>AWS allocates fixed static addresses to each instance. They are Elastic
+    because you can allocate, attach, detach and free addresses as needed</p>
+     <p>There is a limit of 5 Elastic IP Addresses per user</p>
+     <p>More info at <a href="http://aws.amazon.com/articles/1346">AWS Feature Guide</a></p>
+   </section>
+   <section>
+     <hgroup>
+       <h1>Key Concepts</h1>
+       <h2>Security Group</h2>
+     </hgroup>
+     <p>A security group is the allowable set of inbound network connection for
+    an instance. Each group has a unique name and lists the protocols, ports,
+    and IP address ranges that are allowed.</p>
+     <p>A single group can be applied to multiple instances and multiple groups
+    can be applied to single instance.</p>
+     <p>Security groups typically permit access to ports 22 and 80 for access to
+    ssh and a webserver. Additional ports can be added to the security group
+    such as port 8080 for apache-tomcat or 5432 for postgres. In addition to
+    adding these ports to a security group, the application will also have to be
+    configured to accept external requests as needed.</p>
+     <p>More information in security groups are on <a
+    href="http://docs.amazonwebservices.com/AWSEC2/latest/UserGuide/">Amazon</a></p>
+   </section>
+   <section>
+     <hgroup>
+       <h1>Key Concepts</h1>
+       <h2>Access Control List</h2>
+     </hgroup>
+     <p>An Access Control List (ACL) specifies permissions for buckets and
+    objects. Every bucket and object has an ACL that defines which AWS accounts
+    and groups that can access the object.</p>
+     <p>ACLs can be manage through the AWS Management Console or through a third
+    party application such as S3Fox</p>
+   </section>
+   <section>
+      <hgroup>
+        <h1>AWS Basics</h1>
+        <h2>Building Blocks</h2>
+      </hgroup>
+      <ul>
+        <li class="action">Simple Storage Service (S3)</li>
+        <li class="action">Elastic Block Store (EBS)</li>
+        <li class="action">Elastic Compute Cloud (EC2)</li>
+        <li class="action">Elastic Load Balancer</li>
+        <li class="action">CloudWatch and Auto Scaling</li>
+      </ul>
+    </section>
+   <section>
+      <hgroup>
+        <h1>Building Blocks</h1>
+        <h2>Simple Storage Service</h2>
+      </hgroup>
+      <p>S3 is used to store binary data objects for private or public use. It
+    is fault tolerant, assumes that hardware failire is common, and makes
+    multiple copies to achieve high availability and durability.</p>
+      <p>All objects reside in buckets and any single object has a 5gb
+    limit. You can have as many objects in a single bucket as needed</p>
+      <p>An S3 account can have 100 buckets.</p>
+      <p>You must have a globally unique bucket name and a key unique to that
+    bucket. For example:
+        <code>http://my_awesome_mapserver.s3.amazonaws.com/hurricane_irene.tiff</code>
+      </p>
+      <p> S3 is the place to store static files such as static pages,
+    javascript, imagery, and other media files.</p>
+      <p>S3 charges are based on amount of data stored, amount of data
+    transfered in and out, and the number of requests made</p>
+    </section>
+    <section>
+      <hgroup>
+        <h1>Building Blocks</h1>
+        <h2>Elastic Block Store (EBS)</h2>
+      </hgroup>
+      <p>An Elastic Block Store is a disk volume. You can attach it to any
+    running instance in the same Availability Zone.</p>
+      <p>Volumes are independent of any instance, that means they persist when
+    an instance is shutdown or terminated</p>
+      <p>EVS volumes are useful for storing application data such as database tables.</p>
+    </section>
+    <section>
+      <hgroup>
+        <h1>Building Blocks</h1>
+        <h2>Elastic Compute Cloud - Standard</h2>
+      </hgroup>
+      <p>EC2 is the infrastructure underlaying the ability to lauch Amazon
+    Machine Instances</p>
+      <p>There are instances to meet the majority of needs through providing a
+    range of memory, processing power and local disk storage</p>
+      <ul>
+        <li>Standard Instances have memory to CPU ratios suitable for most
+    general purpose applications;
+          <ul>
+            <li>High-Memory instances offer larger memory sizes for high
+    throughput applications, including database and memory caching
+    applications</li>
+            <li>High-CPU instances have proportionally more CPU
+    resources than memory (RAM) and are well suited for compute-intensive
+    applications.</li>
+          </ul>
+        </li>
+      </ul>
+    </section>
+   <section>
+      <hgroup>
+        <h1>Building Blocks</h1>
+        <h2>Elastic Compute Cloud - Micro</h2>
+      </hgroup>
+      <ul>
+        <li>Micro instances provide a small amount of consistent CPU resources
+    and allow you to burst CPU capacity when additional cycles are
+    available. They are well suited for lower throughput applications and web
+    sites that consume significant compute cycles periodically.
+        <li>At steady state,
+    Micro instances receive a fraction of the compute resources that Small
+    instances do. Therefore, if your application has compute-intensive or steady
+    state needs, a Small instance (or larger, depending on your needs) is
+    recommended.</li>
+        <li>However, Micro instances can periodically burst up to 2 ECUs
+    (for short periods of time). This is double the number of ECUs available
+    from a Standard Small instance. Therefore, if you have a relatively low
+    throughput application or web site with an occasional need to consume
+    significant compute cycles using Micro instances is recommended.</li>
+      </ul>
+   </section>
+   <section>
+      <hgroup>
+        <h1>Building Blocks</h1>
+        <h2>Elastic Compute Cloud - Other</h2>
+      </hgroup>
+      <ul>
+        <li>Cluster Compute instances provide a very large amount of CPU
+    coupled with increased network performance making them well suited for High
+    Performance Compute (HPC) applications and other demanding network-bound
+    applications.</li>
+        <li>Cluster GPU instances provide general-purpose graphics processing
+    units (GPUs) with proportionally high CPU and increased network performance
+    making them well suited for applications benefitting from highly
+    parallelized processing, including HPC, rendering and media processing
+    applications.</li>
+      </ul>
+   </section>
+   <section>
+     <hgroup>
+       <h1>Building Blocks</h1>
+       <h2>Elastic Load Balancer</h2>
+     </hgroup>
+     <p>The Elastic Load Balancer distributes traffic across EC2 instances.</p>
+     <p>Instances can be in the same Availability Zone or scattered across
+    several zones in a Region</p>
+     <p>The Load Balancer checks the health of instances it manages and stops
+    sending traffic to unhealthy or non-responsive instances</p>
+     <p>The Load Balancer works well with stateless applications, such as OGC
+    Web Services or RESTful APIs</p>
+  </section>
+   <section>
+     <hgroup>
+       <h1>Building Blocks</h1>
+       <h2>Cloud Watch and Auto Scaling</h2>
+     </hgroup>
+     <p>CloudWatch is a feature that provides monitoring within EC2 by
+    collecting and storing performance information such as
+       <ul>
+         <li>CPU load average</li>
+         <li>disk I/O rate</li>
+         <li>network I/O rate</li>
+       </ul>
+     </p>
+     <p>Auto Scaling uses the data collected by CloudWatch to add instances as
+    demand increases and terminate them as demand decreases within an
+    auto scaling group</p>
+     <p>You can set triggers for adding or decreasing the number of instances by
+    using Auto Scaling</p> 
+  </section>      
+   <section>
+     <hgroup>
+        <h1>Other details</h1>
+        <h2>Small stuff</h2>
+      </hgroup>
+  		<p>The hash updates with each slide.</p>
+  		<p>The slideshow itself has 3 dependencies: jQuery, htmlSlides.js, and a small stylesheet.</p>
+  		<p>The slide script has one option, the option to hide the toolbar at the top:</p>
+  		<pre>
+htmlSlides.init({ toolbar: true });
+  		</pre>
+    </section>
+  	<section>
+      <hgroup>
+        <h1>That's all</h1>
+      </hgroup>
+      <p>Get it at <a href="http://github.com/robflaherty/html-slideshow">github</a>.</p>
+      <p>- Rob Flaherty / <a href="http://twitter.com/robflaherty">@robflaherty</a> / <a href="mailto:rob@ravelrumba.com">rob@ravelrumba.com</a></p>
+    </section>
+    <!-- /End slides -->
+    
+  </div>
+  <!-- /deck -->
+  <script src="../lib/jquery-1.5.2.min.js"></script>
+  <script src="../lib/jquery.jswipe-0.1.2.js"></script>  
+  <script src="../lib/htmlSlides.js"></script>
+  <script>
+    //Do our business when the DOM is ready for us
+    $(function() {
+      
+      //You can trigger Javascript based on the slide number like this:
+      $('html').bind('newSlide', function(e, id) { 
+        switch(id) {
+          case 2:
+            console.log('This is the second slide.');;
+            break;
+          case 3:
+            console.log('Hello, third slide.');
+            break;
+        }
+      });
 
-
-
-<hr>
-<address></address>
-<!-- hhmts start -->Last modified: Mon Sep  5 13:08:49 CDT 2011 <!-- hhmts end -->
-</body> </html>
+      //One little option: hideToolbar (boolean; default = false)
+      htmlSlides.init({ hideToolbar: true });
+      
+    });
+  </script>
+  </body>
+</html>
