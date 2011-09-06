@@ -183,7 +183,7 @@
         <h2>Simple Storage Service</h2>
       </hgroup>
       <p>S3 is used to store binary data objects for private or public use. It
-    is fault tolerant, assumes that hardware failire is common, and makes
+    is fault tolerant, assumes that hardware failure is common, and makes
     multiple copies to achieve high availability and durability.</p>
       <p>All objects reside in buckets and any single object has a 5gb
     limit. You can have as many objects in a single bucket as needed</p>
@@ -206,8 +206,11 @@
     running instance in the same Availability Zone.</p>
       <p>Volumes are independent of any instance, that means they persist when
     an instance is shutdown or terminated</p>
-      <p>EVS volumes are useful for storing application data such as database tables.</p>
-    </section>
+      <p>EVS volumes are useful for storing application data such as database
+    tables.</p>
+      <p>Priced at a rate of $0.10 per allocated GB per month Amazon EBS also
+    charges $0.10 per 1 million I/O requests.</p>
+   </section>
     <section>
       <hgroup>
         <h1>Building Blocks</h1>
@@ -492,7 +495,18 @@
        <br>
        <img src="images/maru-20090425-125127.jpg" alt="kitteh break!"/>
      </hgroup>
-  </section>     
+   </section>
+   <section>
+     <hgroup>
+       <h1>Deploying Mapping Services</h1>
+       <h2>Intro</h2>
+     </hgroup>
+     <p>Using geoserver as an example, but can be any map or data service</p>
+     <p>We will make heavy use of bash scripting, but can be in any scripting
+    language</p>
+     <p>Goal is to automate the build out of servers</p>
+  </section>
+     
    <section>
      <hgroup>
         <h1>Other details</h1>
