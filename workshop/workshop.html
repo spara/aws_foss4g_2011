@@ -35,7 +35,7 @@
         <h2>What we will cover</h2>
         <ul>
           <li class="action"> Amazon Web Service basic concepts
-          <li class="action"> Amazon Web Service web and commandline tools
+          <li class="action"> Amazon Web Service tools
           <li class="action"> Deploying map services on AWS
           <li class="action"> Building a custom Amazon Machine Image (AMI)
           <li class="action"> Configuring and deploying a load balance cluster
@@ -301,7 +301,198 @@
     auto scaling group</p>
      <p>You can set triggers for adding or decreasing the number of instances by
     using Auto Scaling</p> 
-  </section>      
+  </section>
+   <section>
+     <hgroup>
+       <h1>Break</h1>
+       <h2>Question and Answer</h2>
+       <br>
+       <br>
+       <img src="images/maru1.jpg" alt="kitteh break!"/>
+     </hgroup>
+  </section>       
+  <section>
+    <hgroup>
+      <h1>Amazon Web Service Tools</h1>
+      <h2>Exercise 1: Creating Security Crendentials</h2>
+    </hgroup>
+    <p>PURPOSE: We will generate public and private keys for managing AWS components from
+    the command line.</p>
+    <ol>
+      <li>Log into the AWS Web Site.</li>
+      <li>Click on Your Account and select Security Credentials</li>
+      <li>Click the X.509 Certificates tab</li>
+    </ol>
+    <img src="images/security_credentials.png" alt="Security credentials
+    console"/>
+   </section>
+   <section>
+     <hgroup>
+       <h1>Amazon Web Service Tools</h1>
+       <h2>Exercise 1: Creating Security Crendentials (cont.)</h2>
+     </hgroup>
+     <ol>
+       <li>Make a directory called 'ec2' in your home directory</li>
+       <li>Click Create a New Certificate and download the certificate and private key files</li>
+     </ol>
+     <img src="images/x509-download.png" alt="Certificate downloads" width="300" height="400" />
+   </section>
+   <section>
+     <hgroup>
+       <h1>Amazon Web Service Tools</h1>
+       <h2>Exercise 2: Generate keypair using AWS Console</h2>
+     </hgroup>
+     <p>PURPOSE: Keypairs are needed to launch and log into instances.</p>
+     <ol>
+       <li>Log into the AWS Management Console and click on the Amazon EC2 tab.</li>
+       <li>Click on Key Pairs in the Navigation pane on the left.</li>
+     </ol>
+     <img src="images/aws_console_keypair.png" alt="AWS Console Keypair" width="800" height="400"/>
+   </section>
+   <section>
+     <hgroup>
+       <h1>Amazon Web Service Tools</h1>
+       <h2>Exercise 2: Generate keypair using AWS Console (cont.)</h2>
+     </hgroup>
+     <ul>
+       <li>Click on Create Key Pair, enter a name, and click Create</li>
+       <li>The key pair will be downloaded automatically, move to your ec2
+    directory.</li>
+       <li> On Unix based systems, change permissions to 600</li>
+     </ul>
+     <br>
+     <br>
+     <table>
+       <tr>
+         <td><img src="images/create-keypair.png" alt="Create keypair"
+    style="float:left;"/></td>
+         <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+         <td><img src="images/download-keypair.png" alt="Download keypair"
+    style="float:right;"/></td>
+       </tr>
+     </table>
+  </section>
+   <section>
+     <hgroup>
+       <h1>Amazon Web Service Tools</h1>
+       <h2>Exercise 3: Creating a Security Group</h2>
+     </hgroup>
+    <ul>
+       <li>Select Security Groups</li>
+       <li>Select Default Rule</li>
+       <li>Create a new rule</li>
+       <li>Set port range (8080)</li>
+       <li>Click Add Rule</li>
+     </ul>
+   </section>
+   <section>
+     <hgroup>
+       <h1>Amazon Web Service Tools</h1>
+       <h2>Exercise 3: Creating a Security Group</h2>
+     </hgroup>
+     <img src="images/security_console.png" alt="Security console"/>
+  </section>
+  <section>
+     <hgroup>
+       <h1>Amazon Web Service Tools</h1>
+       <h2>Exercise 4: Launching an EC2 instance</h2>
+     </hgroup>
+     <ul>
+       <li>Log in the AWS Management Console and click the Amazon EC2 tab.</li>
+       <li>Click on AMIs in the Navigation side menu.</li>
+       <li>In the Amazon Machine Images pane, select Public Images and All
+    Platforms in the drop down menus.</li>
+       <li>Copy and paste the Ubuntu 10.04 LTS Lucid EBS boot AMI: ami-63be790a</li>
+     </ul>
+     <img src="images/launch_instance.png" alt="Launch instance"/>
+   </section>
+   <section>
+     <hgroup>
+       <h1>Amazon Web Service Tools</h1>
+       <h2>Exercise 4: Launching an EC2 instance (cont.)</h2>
+     </hgroup>
+     <p></p>
+     <ul>
+       <li>To launch the instance, select the check box and click on the Launch button.</li>
+     </ul>
+      <img src="images/launch_instance.png" alt="Request instant wizard"/>
+   </section>
+   <section>
+     <hgroup>
+       <h1>Amazon Web Service Tools</h1>
+       <h2>Exercise 4: Launching an EC2 instance (cont.)</h2>
+     </hgroup>
+    <ul>
+       <li>Enter 1 in the Number of Instances field.</li>
+       <li>Select the m1.small Instance Type option.</li>
+       <li>Select the Availability Zone</li>
+     </ul>
+      <img src="images/request_instances_wizard.png" alt="Select number of instances"/>
+   </section>
+   <section>
+     <hgroup>
+       <h1>Amazon Web Service Tools</h1>
+       <h2>Exercise 4: Launching an EC2 instance (cont.)</h2>
+     </hgroup>
+     <ul>
+       <li>Review selected options.</li>
+     </ul>
+     <p>
+      <img src="images/number_instance.png" alt="Review selected options"/>
+   </section>
+   </section>
+   <section>
+     <hgroup>
+       <h1>Amazon Web Service Tools</h1>
+       <h2>Exercise 4: Launching an EC2 instance (cont.)</h2>
+     </hgroup>
+    <ul>
+       <li>Name the instance</li>
+     </ul>
+     <p>
+      <img src="images/instance_name.png" alt="Name the instance"/>
+   </section>
+  <section>
+     <hgroup>
+       <h1>Amazon Web Service Tools</h1>
+       <h2>Exercise 4: Launching an EC2 instance (cont.)</h2>
+     </hgroup>
+    <ul>
+       <li>Select keypair to use with the instance, you will use this to login</li>
+     </ul>
+     <p>
+      <img src="images/instance_keypair.png" alt="Select the keypair"/>
+   </section>
+   <section>
+     <hgroup>
+       <h1>Amazon Web Service Tools</h1>
+       <h2>Exercise 4: Launching an EC2 instance (cont.)</h2>
+     </hgroup>
+    <ul>
+       <li>Select the Security Group</li>
+     </ul>
+     <p>
+      <img src="images/instance_security.png" alt="Name the instance"/>
+   </section>
+  <section>
+     <hgroup>
+       <h1>Amazon Web Service Tools</h1>
+       <h2>Exercise 4: Launching an EC2 instance (cont.)</h2>
+     </hgroup>
+    <ul>
+       <li>Launch the instance</li>
+     </ul>
+      <img src="images/instance_finish.png" alt="Name the instance"/>
+   </section>
+   <section>
+     <hgroup>
+       <h1>Break</h1>
+       <h2>Question and Answer</h2>
+       <br>
+       <br>
+       <img src="images/maru-20090425-125127.jpg" alt="kitteh break!"/>
+     </hgroup>
+  </section>     
    <section>
      <hgroup>
         <h1>Other details</h1>
