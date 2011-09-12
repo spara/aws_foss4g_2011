@@ -506,8 +506,194 @@
     language</p>
      <p>Goal is to automate the build out of servers</p>
   </section>
-     
+  <section>
+  <hgroup>
+  <h1>Deploying Mapping Services</h1>
+  <h2>Setting up the environment</h2>
+  <pre><code>
+  # add ubuntu repos and update
+  sudo sh -c "echo ' ' >> /etc/apt/sources.list"
+  sudo sh -c "echo 'deb http://us.archive.ubuntu.com/ubuntu/ lucid multiverse' >> /etc/apt/sources.list"
+  sudo sh -c "echo 'deb-src http://us.archive.ubuntu.com/ubuntu/ lucid multiverse' >> /etc/apt/sources.list"
+  sudo sh -c "echo 'deb http://us.archive.ubuntu.com/ubuntu/ lucid-updates multiverse' >> /etc/apt/sources.list"
+  sudo sh -c "echo 'deb-src http://us.archive.ubuntu.com/ubuntu/ lucid-updates multiverse' >> /etc/apt/sources.list"
+  sudo sh -c "echo 'deb http://archive.canonical.com/ lucid partner' >> /etc/apt/sources.list"
+  sudo apt-get update
+  </code></pre>
+  </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Mapping Services</h1>
+  <h2>Install and configure Java</h2>
+  <pre>
+  <code>
+  # magic! installs java without physically accepting license
+  echo "sun-java6-jdk shared/accepted-sun-dlj-v1-1 boolean true" | sudo -E debconf-set-selections
+
+  # install Oracle Java
+  sudo apt-get -y install sun-java6-bin
+  
+  # set java paths
+  sudo touch /etc/profile.d/java.sh
+  sudo sh -c "echo 'export JAVA_HOME=/usr/lib/jvm/java-6-sun' >> /etc/profile.d/java.sh"
+  sudo sh -c "echo 'export PATH=$PATH:$JAVA_HOME/bin' >> /etc/profile.d/java.sh"
+  sudo source /etc/profile.d/java.sh
+  export JAVA_HOME=/usr/lib/jvm/java-6-sun
+  export PATH=$PATH:$JAVA_HOME/bin
+  </code>
+  </pre>
+  </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Mapping Services</h1>
+  <h2>Install and configure Apache and Tomcat</h2>
+  <pre>
+  <code>
+  #install and configure tomcat6
+  sudo apt-get install -y tomcat6
+  sudo chgrp -R tomcat6 /etc/tomcat6
+  sudo chmod -R g+w /etc/tomcat6
+
+  # install and configure apache
+  sudo apt-get install -y apache2
+  sudo ln -s /etc/apache2/mods-available/proxy.conf /etc/apache2/mods-enabled/proxy.conf
+  sudo ln -s /etc/apache2/mods-available/proxy.load /etc/apache2/mods-enabled/proxy.load
+  sudo ln -s /etc/apache2/mods-available/proxy_http.load /etc/apache2/mods-enabled/proxy_http.load
+  </code>
+  </pre>
+  </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Mapping Services</h1>
+  <h2>Configure Tomcat proxy</h2>
+  <pre>
+  <code>
+  #add tomcat proxy
+  sudo chmod 666 /etc/apache2/sites-available/default
+  sudo sed -i '$d'  /etc/apache2/sites-available/default
+  sudo sh -c "echo ' ' >> /etc/apache2/sites-available/default"
+  sudo sh -c "echo 'ProxyRequests Off' >> /etc/apache2/sites-available/default"
+  sudo sh -c "echo '# Remember to turn the next line off if you are proxying to a NameVirtualHost' >> /etc/apache2/sites-available/default"
+  sudo sh -c "echo 'ProxyPreserveHost On' >> /etc/apache2/sites-available/default"
+  sudo sh -c "echo ' ' >> /etc/apache2/sites-available/default"
+  sudo sh -c "echo '<Proxy *>' >> /etc/apache2/sites-available/default"
+  sudo sh -c "echo '    Order deny,allow' >> /etc/apache2/sites-available/default"
+  sudo sh -c "echo '    Allow from all' >> /etc/apache2/sites-available/default"
+  sudo sh -c "echo '</Proxy>' >> /etc/apache2/sites-available/default"
+  sudo sh -c "echo ' ' >> /etc/apache2/sites-available/default"
+  sudo sh -c "echo 'ProxyPass /geoserver http://localhost:8080/geoserver' >> /etc/apache2/sites-available/default"
+  sudo sh -c "echo 'ProxyPassReverse /geoserver http://localhost:8080/geoserver' >> /etc/apache2/sites-available/default"
+  sudo sh -c "echo ' ' >> /etc/apache2/sites-available/default"
+  sudo sh -c "echo '</VirtualHost>' >> /etc/apache2/sites-available/default"
+  sudo chmod 644 /etc/apache2/sites-available/default
+  </code>
+  </pre>
+  </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Mapping Services</h1>
+  <h2>Installing Geoserver</h2>
+  <pre><code>
+  # get geoserver, change to version you want
+  sudo service tomcat6 stop
+  sudo apt-get -y install curl
+  sudo apt-get -y install unzip
+  curl -L http://downloads.sourceforge.net/geoserver/geoserver-2.1.1-war.zip -o geoserver-2.1.1-war.zip
+  sudo unzip -d /var/lib/tomcat6/webapps/ geoserver-2.1.1-war.zip
+  sudo chown -R tomcat6 /var/lib/tomcat6/webapps/geoserver.war
+  sudo chgrp g+w tomcat6 /var/lib/tomcat6/webapps/geoserver.war
+
+  # restart
+  sudo service tomcat6 restart
+  sudo service apache2 restart
+
+  # echo message
+  addy=$(GET http://169.254.169.254/latest/meta-data/public-hostname)
+  echo " "
+  echo "Geoserver is available at: http://$addy/geoserver"
+  </code></pre>
+  </hgroup>
+  </section>
    <section>
+     <hgroup>
+       <h1>Break</h1>
+       <h2>Question and Answer</h2>
+       <br>
+       <br>
+       <img src="images/maru1.jpg" alt="kitteh break!"/>
+     </hgroup>
+  </section> 
+  <section>
+  <hgroup>
+  <h1>Deploying Map Services</h1>
+  <h2>Exercise: Creating Certificates </h2>
+  <p>Putty (ssh for windows) requires a different certificate. We will use
+  puttygen to create it. </p>
+  <p>Load your private key: File > Load</>
+  <p>Click OK</p>
+  <img src="images/puttygen1_annotated.png" alt="Screen 1"/>
+  </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Map Services</h1>
+  <h2>Exercise: Creating Certificates (cont) </h2>
+  <p>Click Save Private Key </p>
+ <img src="images/puttygen2_annotated.png" alt="Screen 2"/>
+  </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Map Services</h1>
+  <h2>Exercise: Creating Certificates (cont) </h2>
+  <p>Click Yes when PuTTYgen prompts you about saving the key without a
+  passphrase.</p>
+  <p>Save the key as &lt;keyname&gt;.ppk</p>
+  <img src="images/puttygen3_annotated.png" alt="Screen 3"/>
+  </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Map Services</h1>
+  <h2>Exercise: Creating Certificates (cont.) </h2>
+  <p>Click Yes when PuTTYgen prompts you about saving the key without a
+  passphrase.</p>
+  <p>Save the key as &lt;keyname&gt;.ppk</p>
+  <img src="images/puttygen3_annotated.png" alt="Screen 3"/>
+  </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Map Services</h1>
+  <h2>Exercise: Logging in (cont.) </h2>
+  <p>Launch Putty to open an SSH session. Expand connection, SSH, and select Auth. Click the browse
+  button next to the Private key file for authentication: field, and select the
+  .PPK file you just created with Puttygen.</p>
+  <img src="images/putty1_annotated.png" alt="Screen 3"/>
+  </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Map Services</h1>
+  <h2>Exercise: Logging in (cont.) </h2>
+  <p>Select Session &gt; Enter the instance address &gt; Click Open </p>
+  <img src="images/putty2_annotated.png" alt="Screen 3"/>
+  </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Map Services</h1>
+  <h2>Exercise: Logging in (cont.) </h2>
+  <p>Login as ubuntu </p>
+  <img src="images/putty3_annotated.png" alt="Screen 3"/>
+  </hgroup>
+  </section>
+
+  <section>
      <hgroup>
         <h1>Other details</h1>
         <h2>Small stuff</h2>
