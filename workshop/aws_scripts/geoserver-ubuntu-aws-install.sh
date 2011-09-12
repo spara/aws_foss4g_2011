@@ -1,17 +1,17 @@
 #
-# install Geoserver on Ubuntu Maverick 10.10
+# install Geoserver on Ubuntu Lucid
 # note: Geoserver is proxied through apache so port 8080 is not used
 #
-# @spara 11/15/10
+# @spara 9/12/11
 #
 
 # setup sources 
 sudo sh -c "echo ' ' >> /etc/apt/sources.list"
-sudo sh -c "echo 'deb http://us.archive.ubuntu.com/ubuntu/ maverick multiverse' >> /etc/apt/sources.list"
-sudo sh -c "echo 'deb-src http://us.archive.ubuntu.com/ubuntu/ maverick multiverse' >> /etc/apt/sources.list"
-sudo sh -c "echo 'deb http://us.archive.ubuntu.com/ubuntu/ maverick-updates multiverse' >> /etc/apt/sources.list"
-sudo sh -c "echo 'deb-src http://us.archive.ubuntu.com/ubuntu/ maverick-updates multiverse' >> /etc/apt/sources.list"
-sudo sh -c "echo 'deb http://archive.canonical.com/ maverick partner' >> /etc/apt/sources.list"
+sudo sh -c "echo 'deb http://us.archive.ubuntu.com/ubuntu/ lucid multiverse' >> /etc/apt/sources.list"
+sudo sh -c "echo 'deb-src http://us.archive.ubuntu.com/ubuntu/ lucid multiverse' >> /etc/apt/sources.list"
+sudo sh -c "echo 'deb http://us.archive.ubuntu.com/ubuntu/ lucid-updates multiverse' >> /etc/apt/sources.list"
+sudo sh -c "echo 'deb-src http://us.archive.ubuntu.com/ubuntu/ lucid-updates multiverse' >> /etc/apt/sources.list"
+sudo sh -c "echo 'deb http://archive.canonical.com/ lucid partner' >> /etc/apt/sources.list"
 sudo apt-get update
 
 # magic! (installs java without physically accepting license

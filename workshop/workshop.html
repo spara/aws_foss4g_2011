@@ -839,7 +839,26 @@
        <br>
        <img src="images/maru1.jpg" alt="kitteh break!"/>
      </hgroup>
-  </section> 
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Map Services</h1>
+  <h2>Exercise: Installing Geoserver - Housekeeping </h2>
+  <p>Putty (ssh for windows) requires a different certificate. We will use
+  puttygen to create it. </p>
+  <p>Load your private key: File > Load</>
+  <p>Click OK</p>
+  <img src="images/puttygen1_annotated.png" alt="Screen 1"/>
+  </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Map Services</h1>
+  <h2>Exercise: Creating Certificates (cont) </h2>
+  <p>Click Save Private Key </p>
+  <img src="images/puttygen2_annotated.png" alt="Screen 2"/>
+  </hgroup>
+  </section>
   <section>
   <hgroup>
   <h1>Deploying Map Services</h1>
@@ -856,7 +875,7 @@
   <h1>Deploying Map Services</h1>
   <h2>Exercise: Creating Certificates (cont) </h2>
   <p>Click Save Private Key </p>
- <img src="images/puttygen2_annotated.png" alt="Screen 2"/>
+  <img src="images/puttygen2_annotated.png" alt="Screen 2"/>
   </hgroup>
   </section>
   <section>
@@ -905,7 +924,72 @@
   <img src="images/putty3_annotated.png" alt="Screen 3"/>
   </hgroup>
   </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Map Services</h1>
+  <h2>Exercise: Installing Geoserver </h2>
+  <p><pre>
+  wget https://raw.github.com/spara/aws_foss4g_2011/master/workshop/aws_scripts/geoserver-ubuntu-aws-install.sh
 
+  chmod 755 geoserver-ubuntu-aws-install.sh
+
+  ./geoserver-ubuntu-aws-install.sh
+  </pre></p>
+  </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Map Services</h1>
+  <h2>Exercise: Installing Postgres/PostGIS </h2>
+  <p><pre>
+  wget https://raw.github.com/spara/aws_foss4g_2011/master/workshop/aws_scripts/postgres_postgis_aws_install.sh
+
+  chmod 755 postgres_postgis_aws_install.s
+
+  ./postgres_postgis_aws_install.s
+  </pre></p>
+  </hgroup>
+  </section>
+  <section>
+    <hgroup>
+      <h1>Break</h1>
+      <h2>Question and Answer</h2>
+      <br>
+      <br>
+      <img src="images/maru the japanese cat.jpg" alt="kitteh break!"/>
+     </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Building a Amazon Machine Image (AMI)</h1>
+  <h2>Exercise: Create image</h2>
+  <p></p>
+  <img src="images/bundle1_annotated.png" alt=""/>
+  </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Building a Amazon Machine Image (AMI)</h1>
+  <h2>Exercise: Create image</h2>
+  <p></p>
+  <img src="images/bundle2_annotated.png" alt=""/>
+ </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Building a Amazon Machine Image (AMI)</h1>
+  <h2>Exercise: Create image</h2>
+  <p></p>
+  <img src="images/bundle3.png" alt=""/>
+  </hgroup>
+  </section>
+  <section>
+  <h1>Building a Amazon Machine Image (AMI)</h1>
+  <h2>Exercise: Create image</h2>
+  <p></p>
+  <img src="images/bundle4_annotated.png" alt=""/>
+ </hgroup>
+  </section>
   <section>
      <hgroup>
         <h1>Other details</h1>
