@@ -618,6 +618,219 @@
   </code></pre>
   </hgroup>
   </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Mapping Services</h1>
+  <h2>Installing PostgreSQL and PostGIS</h2>
+  <p>Installing PostgreSQL/PostGIS is optional<br><br>
+  This section creates a RAID 10 using EBS Volumes and installs PostgreSQL
+  and PostGIS from source.<br><br>
+  Major props to Simon Tokumine (@tokumin) who wrote the original script
+  </p>
+  </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Mapping Services</h1>
+  <h2>Setup</h2>
+  <pre><code>
+  # change this to you keypair and cert
+  export EC2_PRIVATE_KEY=[pk.pem]
+  export EC2_CERT=[cert.pem]
+
+  # change this to your instance
+  instanceid=$(GET http://169.254.169.254/latest/meta-data/instance-id)
+
+  # change to the instance's availability zone
+  availability_zone=$(GET http://169.254.169.254/latest/meta-data/placement/availability-zone)
+  </code></pre>
+  </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Mapping Services</h1>
+  <h2>Setup</h2>
+  <pre><code>
+  # builds out RAID10, so size of RAID=volumes*size/2
+  volumes=$1
+  size=$2
+
+  # change to your mount point
+  mountpoint=/mnt/vol1
+
+  # change to a device
+  raid_array_location=/dev/md0
+  raid_level=10
+  raid_layout=f2
+  raid_chunk=256
+  postgres_password=postgres
+
+  # create a postgis template
+  db_name=template_postgis
+  </code></pre>
+  </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Mapping Services</h1>
+  <h2>Create EBS Volumes</h2>
+  <pre><code>
+  # install ec2 tools
+  sudo apt-get -y install ec2-api-tools
+
+  # create EBS volumes
+  devices=$(perl -e 'for$i("h".."k"){for$j("",1..15){print"/dev/sd$i$j\n"}}'|
+  head -$volumes)
+  devicearray=($devices)
+  volumeids=
+  i=1
+  while [ $i -le $volumes ]; do
+    volumeid=$(ec2-create-volume -z $availability_zone --size $size | cut -f2)
+    echo "$i: created $volumeid"
+    device=${devicearray[$(($i-1))]}
+    echo $volumeid
+    ec2-attach-volume $volumeid -i $instanceid -d $device
+    volumeids="$volumeids $volumeid"
+    let i=i+1
+  done
+  echo "volumeids='$volumeids'"
+ </code></pre>
+  </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Mapping Services</h1>
+  <h2>Create EBS Volumes</h2>
+  <pre><code>
+  # install mdadm - software raid utility
+  sudo apt-get update 
+  echo "postfix	postfix/main_mailer_type select	No configuration" | sudo -E debconf-set-selections
+  sudo apt-get install -y mdadm xfsprogs
+
+  # get list of devices
+  devices=$(perl -e 'for$i("h".."k"){for$j("",1..15){print"/dev/sd$i$j\n"}}'|
+  head -$volumes)
+  </code></pre>
+  </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Mapping Services</h1>
+  <h2>Create RAID 10</h2>
+  <pre><code>
+  #builds out RAID10
+  yes | sudo mdadm \
+    --create $raid_array_location \
+    --chunk=$raid_chunk \
+    --level=$raid_level \
+    --layout=$raid_layout \
+    --metadata=1.1 \
+    --raid-devices $volumes \
+    $devices
+
+  echo DEVICE $devices | sudo tee /etc/mdadm.conf
+  sudo mdadm --detail --scan | sudo tee -a /etc/mdadm.conf
+
+  # create xfs file system on RAID 10
+  sudo mkfs.xfs $raid_array_location
+
+  # add to fstab, create mountpoint and mount it
+  echo "$raid_array_location $mountpoint xfs noatime 0 0" | sudo tee -a /etc/fstab
+  sudo mkdir $mountpoint
+  sudo mount $mountpoint
+  </code></pre>
+  </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Mapping Services</h1>
+  <h2>Install PostgeSQL on RAID</h2>
+  <pre><code>
+  # install PostgreSQL
+  sudo apt-get -y install libxml2-dev
+  sudo apt-get -y install postgresql-8.4 postgresql-server-dev-8.4 postgresql-contrib-8.4 libpq-dev
+  sudo /etc/init.d/postgresql-8.4 stop
+
+  # move data director to RAID
+  sudo mkdir $mountpoint/data
+  sudo chmod -R 700 $mountpoint/data
+  sudo chown -R postgres.postgres $mountpoint/data
+  sudo -u postgres /usr/lib/postgresql/8.4/bin/initdb -D $mountpoint/data
+  sudo sed -i.bak -e 's/port = 5433/port = 5432/' /etc/postgresql/8.4/main/postgresql.conf
+  sudo sed -i.bak -e "s@\/var\/lib\/postgresql\/8.4\/main@$mountpoint\/data@" /etc/postgresql/8.4/main/postgresql.conf
+  sudo sed -i.bak -e 's/ssl = true/#ssl = true/' /etc/postgresql/8.4/main/postgresql.conf
+  sudo /etc/init.d/postgresql start
+  </code></pre>
+  </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Mapping Services</h1>
+  <h2>More setup, install utilities</h2>
+  <pre><code>
+  cd /tmp
+  sudo apt-get -y install bzip2
+  sudo apt-get -y install g++
+  sudo apt-get -y install checkinstall
+  </code></pre>
+  </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Mapping Services</h1>
+  <h2>Install GEOS</h2>
+  <pre><code>
+  wget http://download.osgeo.org/geos/geos-3.2.2.tar.bz2
+  bunzip2 geos-3.2.2.tar.bz2
+  tar xvf geos-3.2.2.tar
+  sudo chown -R ubuntu.ubuntu /tmp/geos-3.2.2
+  cd geos-3.2.2
+  ./configure
+  make 
+  sudo make install
+  </code></pre>
+  </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Mapping Services</h1>
+  <h2>Install Proj4</h2>
+  <pre><code>
+  cd ../
+  wget http://download.osgeo.org/proj/proj-4.7.0.tar.gz
+  tar xvfz proj-4.7.0.tar.gz
+  cd proj-4.7.0
+  ./configure
+  make 
+  sudo make install
+  cd ../
+  </code></pre>
+  </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Mapping Services</h1>
+  <h2>Install PostGIS</h2>
+  <pre><code>
+  # install postgis 
+  wget http://postgis.refractions.net/download/postgis-1.5.3.tar.gz
+  tar xvfz postgis-1.5.3.tar.gz
+  cd postgis-1.5.3
+  ./configure
+  make 
+  sudo make install
+  sudo /sbin/ldconfig
+
+  # config template_postgis
+  sudo -u postgres psql -c"ALTER user postgres WITH PASSWORD '$postgres_password'"
+  sudo -u postgres createdb $db_name
+  sudo -u postgres createlang -d$db_name plpgsql
+  sudo -u postgres psql -d$db_name -f /usr/share/postgresql/8.4/contrib/postgis-1.5/postgis.sql
+  sudo -u postgres psql -d$db_name -f /usr/share/postgresql/8.4/contrib/postgis-1.5/spatial_ref_sys.sql
+  sudo -u postgres psql -d$db_name -c"select postgis_lib_version();"
+  </code></pre>
+  </hgroup>
+  </section>
    <section>
      <hgroup>
        <h1>Break</h1>
