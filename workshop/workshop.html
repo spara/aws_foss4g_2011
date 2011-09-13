@@ -34,8 +34,8 @@
         <h1>Deploying mapping services on AWS</h1>
         <h2>What we will cover</h2>
         <ul>
-          <li class="action"> Amazon Web Service basic concepts
-          <li class="action"> Amazon Web Service tools
+          <li class="action"> Amazon Web Services basic concepts
+          <li class="action"> Amazon Web Services tools
           <li class="action"> Deploying map services on AWS
           <li class="action"> Building a custom Amazon Machine Image (AMI)
           <li class="action"> Configuring and deploying a load balance cluster
@@ -64,7 +64,7 @@
         <p>An Availability Zone is a set of locations within an AWS Region. Each
     zone is independent from other zones to protect from failure.</p>
         <p>The Region name is part of the zone name, eg:</p>
-        <pre>us-east-1d</pre>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;us-east-1d</p>
         <p>This is one of the four zones in the us-east-1 Region</p>
         <p>The mapping of a zone name to a location is different and consistent
     for each AWS account. This means that we maybe both be in zone us-east-1d
@@ -93,15 +93,13 @@
      </hgroup>
      <p>Access identifiers are used to identify accounts and create a
     signature for each request made.</p>
-     <p> Indentifiers use public key encryption which come in pairs. The first
+     <p> Identifiers use public key encryption which come in pairs. The first
     part is public and identifies a single AWS account. The second part is
     private and used to create a signature for each request.</p>
      <p>AWS provide two different sets of acces identifiers. The first is an
     Access Key ID and a Secret Access Key. The second set is a X.509 certificate
     with public and private keys.</p>
-     <p>In practice you will need your public key and the X.509 certificate to
-    perform most AWS tasks.</p>
-     <p>More information on access and identity management on <a href="http://docs.amazonwebservices.com/IAM/latest/GettingStartedGuide/">Amazon</a></p>
+    <p>More information on access and identity management on <a href="http://docs.amazonwebservices.com/IAM/latest/GettingStartedGuide/">Amazon</a></p>
    </section>
    <section>
      <hgroup>
@@ -113,7 +111,7 @@
      <p>You can use a pre-built AMI, customize it, and create a new AMI based on
     your changes</p>
      <p>Each AMI has a unique id, eg: <code>ami-63be790a</code></p>
-     <p>The AWS AMU catalog contains a complete list of public and registered AMIs.</p>
+     <p>The AWS AMI catalog contains a complete list of public and registered AMIs.</p>
    </section>
    <section>
      <hgroup>
@@ -130,7 +128,7 @@
        <h1>Key Concepts</h1>
        <h2>Elastic IP Address</h2>
      </hgroup>
-     <p>AWS allocates fixed static addresses to each instance. They are Elastic
+     <p>AWS allocates fixed static addresses to each instance. They are elastic
     because you can allocate, attach, detach and free addresses as needed</p>
      <p>There is a limit of 5 Elastic IP Addresses per user</p>
      <p>More info at <a href="http://aws.amazon.com/articles/1346">AWS Feature Guide</a></p>
@@ -140,9 +138,9 @@
        <h1>Key Concepts</h1>
        <h2>Security Group</h2>
      </hgroup>
-     <p>A security group is the allowable set of inbound network connection for
-    an instance. Each group has a unique name and lists the protocols, ports,
-    and IP address ranges that are allowed.</p>
+     <p>A security group is the allowed set of inbound network connection for
+    an instance. Each security group has a unique name and lists the protocols, ports,
+    and IP address ranges that are permitted.</p>
      <p>A single group can be applied to multiple instances and multiple groups
     can be applied to single instance.</p>
      <p>Security groups typically permit access to ports 22 and 80 for access to
@@ -158,7 +156,7 @@
        <h1>Key Concepts</h1>
        <h2>Access Control List</h2>
      </hgroup>
-     <p>An Access Control List (ACL) specifies permissions for buckets and
+     <p>An Access Control List (ACL) specifies permissions for S3 buckets and
     objects. Every bucket and object has an ACL that defines which AWS accounts
     and groups that can access the object.</p>
      <p>ACLs can be manage through the AWS Management Console or through a third
@@ -189,8 +187,8 @@
     limit. You can have as many objects in a single bucket as needed</p>
       <p>An S3 account can have 100 buckets.</p>
       <p>You must have a globally unique bucket name and a key unique to that
-    bucket. For example:
-        <code>http://my_awesome_mapserver.s3.amazonaws.com/hurricane_irene.tiff</code>
+    bucket. For example:<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;http://my_awesome_mapserver.s3.amazonaws.com/hurricane_irene.tiff
       </p>
       <p> S3 is the place to store static files such as static pages,
     javascript, imagery, and other media files.</p>
@@ -216,8 +214,7 @@
         <h1>Building Blocks</h1>
         <h2>Elastic Compute Cloud - Standard</h2>
       </hgroup>
-      <p>EC2 is the infrastructure underlaying the ability to lauch Amazon
-    Machine Instances</p>
+      <p>EC2 is the infrastructure underlaying the ability to lauch AMIs</p>
       <p>There are instances to meet the majority of needs through providing a
     range of memory, processing power and local disk storage</p>
       <ul>
@@ -632,6 +629,18 @@
   <section>
   <hgroup>
   <h1>Deploying Mapping Services</h1>
+  <h2>Installing PostgreSQL and PostGIS Setup</h2>
+  <p>Installing PostgreSQL/PostGIS is optional</p>
+  <ul>
+    <li>Start a new AMI instance</li>
+    <li>Copy your keys to the instance</li>
+    <li>chmod 600 *.pem</p>
+  </ul>
+ </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Mapping Services</h1>
   <h2>Setup</h2>
   <pre><code>
   # change this to you keypair and cert
@@ -844,7 +853,8 @@
   <hgroup>
   <h1>Deploying Map Services</h1>
   <h2>Exercise: Housekeeping </h2>
-  <p>Download putty (ssh for windows)from here: http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html<br>
+  <p>Download putty (ssh for windows)from here:<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html<br>
   Get this version: putty-0.61-installer.exe</p>
   <p>Download pscp (scp for windows)<br>
   Get this version: pscp.exe</p>
@@ -864,40 +874,12 @@
   <section>
   <hgroup>
   <h1>Deploying Map Services</h1>
-  <h2>Exercise: Creating Certificates (cont) </h2>
+  <h2>Exercise: Creating Certificates (cont.) </h2>
   <p>Click Save Private Key </p>
   <img src="images/puttygen2_annotated.png" alt="Screen 2"/>
   </hgroup>
   </section>
-  <section>
-  <hgroup>
-  <h1>Deploying Map Services</h1>
-  <h2>Exercise: Creating Certificates </h2>
-  <p>Putty (ssh for windows) requires a different certificate. We will use
-  puttygen to create it. </p>
-  <p>Load your private key: File > Load</>
-  <p>Click OK</p>
-  <img src="images/puttygen1_annotated.png" alt="Screen 1"/>
-  </hgroup>
-  </section>
-  <section>
-  <hgroup>
-  <h1>Deploying Map Services</h1>
-  <h2>Exercise: Creating Certificates (cont) </h2>
-  <p>Click Save Private Key </p>
-  <img src="images/puttygen2_annotated.png" alt="Screen 2"/>
-  </hgroup>
-  </section>
-  <section>
-  <hgroup>
-  <h1>Deploying Map Services</h1>
-  <h2>Exercise: Creating Certificates (cont) </h2>
-  <p>Click Yes when PuTTYgen prompts you about saving the key without a
-  passphrase.</p>
-  <p>Save the key as &lt;keyname&gt;.ppk</p>
-  <img src="images/puttygen3_annotated.png" alt="Screen 3"/>
-  </hgroup>
-  </section>
+
   <section>
   <hgroup>
   <h1>Deploying Map Services</h1>
@@ -908,6 +890,7 @@
   <img src="images/puttygen3_annotated.png" alt="Screen 3"/>
   </hgroup>
   </section>
+
   <section>
   <hgroup>
   <h1>Deploying Map Services</h1>
@@ -950,7 +933,7 @@
   <section>
   <hgroup>
   <h1>Deploying Map Services</h1>
-  <h2>Optional Exercise: Installing Postgres/PostGIS </h2>
+<h2>Optional Exercise: Installing Postgres/PostGIS </h2>
   <p><pre>
   wget https://raw.github.com/spara/aws_foss4g_2011/master/workshop/aws_scripts/postgres_postgis_aws_install.sh
 
@@ -995,56 +978,56 @@
   </section>
   <section>
   <h1>Building an Amazon Machine Image</h1>
-  <h2>Exercise: Launch image</h2>
+  <h2>Exercise: Launch image x 3</h2>
   <p></p>
   <img src="images/bundle4_annotated.png" alt=""/>
  </hgroup>
   </section>
   <section>
   <h1>Building an Elastic Load Balancer</h1>
-  <h2>Exercise: Create load balancer</h2>
+  <h2>Exercise: Create a load balancer</h2>
   <p></p>
   <img src="images/load_balancer1_annotated.png" alt=""/>
  </hgroup>
   </section>
   <section>
   <h1>Building an Elastic Load Balancer</h1>
-  <h2>Exercise: Create load balancer</h2>
+  <h2>Exercise: Create a load balancer</h2>
   <p></p>
   <img src="images/load_balancer2_annotated.png" alt=""/>
  </hgroup>
   </section>
   <section>
   <h1>Building an Elastic Load Balancer</h1>
-  <h2>Exercise: Create load balancer</h2>
+  <h2>Exercise: Create a load balancer</h2>
   <p></p>
   <img src="images/load_balancer3.png" alt="" height="400" width="600"/>
   </hgroup>
   </section>
   <section>
   <h1>Building an Elastic Load Balancer</h1>
-  <h2>Exercise: Create load balancer</h2>
+  <h2>Exercise: Create a load balancer</h2>
   <p></p>
   <img src="images/load_balancer4_annotated.png" alt="" height="400" width="600"/>
   </hgroup>
   </section>
   <section>
   <h1>Building an Elastic Load Balancer</h1>
-  <h2>Exercise: Create load balancer</h2>
+  <h2>Exercise: Create a load balancer</h2>
   <p></p>
   <img src="images/load_balancer5.png" alt="" height="400" width="600"/>
   </hgroup>
   </section>
   <section>
   <h1>Building an Elastic Load Balancer</h1>
-  <h2>Exercise: Create load balancer</h2>
+  <h2>Exercise: Create a load balancer</h2>
   <p></p>
   <img src="images/load_balancer6.png" alt="" />
   </hgroup>
   </section>
   <section>
   <h1>Building an Elastic Load Balancer</h1>
-  <h2>Exercise: Create load balancer</h2>
+  <h2>Exercise: Create a load balancer</h2>
   <p></p>
   <img src="images/load_balancer7.png" alt=""height="400" width="800" />
   </hgroup>
@@ -1052,12 +1035,12 @@
   <section>
   <h1>Deploying Autoscaling</h1>
   <h2>Exercise: Autoscaling setup</h2>
-  <p>Currently there are only command-line tools, we will launch and AMI with the
-  necessary tools in the AWS Console</p>
+  <p>Currently there are only command-line tools for creating autoscaling
+  policies. We will use an AMI with the necessary tools preloaded.</p>
   <p>Use this AMI: ami-9b8143f2</p>
   <p>In windows, zip up your keys in the ec2 directory</p>
   <p>copy your keys (private key and cert) to the AMI</p>
-  <p>pscp -i ec2/[your key] ec2.zip ubuntu@[your ami]</p>
+  <p>pscp -i ec2/[your key] ec2.zip ubuntu@[your ami]:/home/ubuntu/ec2.zip</p>
   </hgroup>
   </section>
   <section>
@@ -1066,7 +1049,8 @@
   <p>Open a putty session after AMI is running</p>
   <p>Login as ubuntu</p>
   <p>Unzip ec2.zip:</p>
-  <p><code>unzip ec2.zip ec2</code></p>
+  <p><code>unzip ec2.zip ec2<br>
+  chmod 600 ec2/*.pem</code></p>
   </hgroup>
   </section>
   <section>
@@ -1095,7 +1079,7 @@ as-create-auto-scaling-group foss4ggroup \
     --name "scale-up" \
     --auto-scaling-group foss4ggroup \
     --adjustment 1 \
-    --type Absolute \
+    --type ChangeInCapacity \
     --cooldown 300 \
     -K ~/ec2/pk-your_private_key.pem \
     -C ~/ec2/cert-/cert-your_cert.pem
@@ -1104,7 +1088,7 @@ as-create-auto-scaling-group foss4ggroup \
     --name "scale-down" \
     --auto-scaling-group foss4ggroup \
     --adjustment -1 \
-    --type Absolute \
+    --type ChangeInCapacity \
     --cooldown 300 \
     -K ~/ec2/pk-your_private_key.pem \
     -C ~/ec2/cert-/cert-your_cert.pem
@@ -1149,6 +1133,21 @@ as-create-auto-scaling-group foss4ggroup \
     -K ~/ec2/pk-your_private_key.pem \
     -C ~/ec2/cert-/cert-your_cert.pem
   </code></pre></p>
+  </hgroup>
+  </section>
+  <section>
+  <h1>Deploying Autoscaling</h1>
+  <h2>Exercise: Deploy autoscaling</h2>
+  <p>edit autoscaling.sh</p>
+  <ul>
+    <li>add your private key and cert</li>
+    <li>add geoserver_ami</li>
+    <li>add loadbalancer name</li>
+  </ul>
+  <br>
+  <p>run autoscaling.sh<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;./autoscale.sh
+  </p>
   </hgroup>
   </section>
   <section>

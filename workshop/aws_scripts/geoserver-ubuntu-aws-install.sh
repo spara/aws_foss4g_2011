@@ -62,8 +62,10 @@ sudo chmod 644 /etc/apache2/sites-available/default
 
 # get geoserver, change to version you want
 sudo service tomcat6 stop
-wget http://downloads.sourceforge.net/geoserver/geoserver-2.0.2-war.zip
-sudo unzip -d /var/lib/tomcat6/webapps/ geoserver-2.0.2-war.zip
+sudo apt-get -y install curl
+sudo apt-get -y install unzip
+curl -L http://downloads.sourceforge.net/geoserver/geoserver-2.1.1-war.zip -o geoserver-2.1.1-war.zip
+sudo unzip -d /var/lib/tomcat6/webapps/ geoserver-2.1.1-war.zip
 sudo chown -R tomcat6 /var/lib/tomcat6/webapps/geoserver.war
 sudo chgrp g+w tomcat6 /var/lib/tomcat6/webapps/geoserver.war
 
