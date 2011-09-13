@@ -843,7 +843,17 @@
   <section>
   <hgroup>
   <h1>Deploying Map Services</h1>
-  <h2>Exercise: Installing Geoserver - Housekeeping </h2>
+  <h2>Exercise: Housekeeping </h2>
+  <p>Download putty (ssh for windows)from here: http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html<br>
+  Get this version: putty-0.61-installer.exe</p>
+  <p>Download pscp (scp for windows)<br>
+  Get this version: pscp.exe</p>
+ </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Map Services</h1>
+  <h2>Exercise: Housekeeping </h2>
   <p>Putty (ssh for windows) requires a different certificate. We will use
   puttygen to create it. </p>
   <p>Load your private key: File > Load</>
@@ -931,22 +941,22 @@
   <p><pre>
   wget https://raw.github.com/spara/aws_foss4g_2011/master/workshop/aws_scripts/geoserver-ubuntu-aws-install.sh
 
-  chmod 755 geoserver-ubuntu-aws-install.sh
+  chmod 755 geoserver-ubuntu-aws-install.sh 
 
-  ./geoserver-ubuntu-aws-install.sh
+  ./geoserver-ubuntu-aws-install.sh 
   </pre></p>
   </hgroup>
   </section>
   <section>
   <hgroup>
   <h1>Deploying Map Services</h1>
-  <h2>Exercise: Installing Postgres/PostGIS </h2>
+  <h2>Optional Exercise: Installing Postgres/PostGIS </h2>
   <p><pre>
   wget https://raw.github.com/spara/aws_foss4g_2011/master/workshop/aws_scripts/postgres_postgis_aws_install.sh
 
-  chmod 755 postgres_postgis_aws_install.s
+  chmod 755 postgres_postgis_aws_install.sh
 
-  ./postgres_postgis_aws_install.s
+  ./postgres_postgis_aws_install.sh
   </pre></p>
   </hgroup>
   </section>
@@ -961,7 +971,7 @@
   </section>
   <section>
   <hgroup>
-  <h1>Building a Amazon Machine Image (AMI)</h1>
+  <h1>Building an Amazon Machine Image</h1>
   <h2>Exercise: Create image</h2>
   <p></p>
   <img src="images/bundle1_annotated.png" alt=""/>
@@ -969,7 +979,7 @@
   </section>
   <section>
   <hgroup>
-  <h1>Building a Amazon Machine Image (AMI)</h1>
+  <h1>Building an Amazon Machine Image</h1>
   <h2>Exercise: Create image</h2>
   <p></p>
   <img src="images/bundle2_annotated.png" alt=""/>
@@ -977,37 +987,197 @@
   </section>
   <section>
   <hgroup>
-  <h1>Building a Amazon Machine Image (AMI)</h1>
+  <h1>Building an Amazon Machine Image</h1>
   <h2>Exercise: Create image</h2>
   <p></p>
   <img src="images/bundle3.png" alt=""/>
   </hgroup>
   </section>
   <section>
-  <h1>Building a Amazon Machine Image (AMI)</h1>
-  <h2>Exercise: Create image</h2>
+  <h1>Building an Amazon Machine Image</h1>
+  <h2>Exercise: Launch image</h2>
   <p></p>
   <img src="images/bundle4_annotated.png" alt=""/>
  </hgroup>
   </section>
   <section>
-     <hgroup>
-        <h1>Other details</h1>
-        <h2>Small stuff</h2>
-      </hgroup>
-  		<p>The hash updates with each slide.</p>
-  		<p>The slideshow itself has 3 dependencies: jQuery, htmlSlides.js, and a small stylesheet.</p>
-  		<p>The slide script has one option, the option to hide the toolbar at the top:</p>
-  		<pre>
-htmlSlides.init({ toolbar: true });
-  		</pre>
-    </section>
+  <h1>Building an Elastic Load Balancer</h1>
+  <h2>Exercise: Create load balancer</h2>
+  <p></p>
+  <img src="images/load_balancer1_annotated.png" alt=""/>
+ </hgroup>
+  </section>
+  <section>
+  <h1>Building an Elastic Load Balancer</h1>
+  <h2>Exercise: Create load balancer</h2>
+  <p></p>
+  <img src="images/load_balancer2_annotated.png" alt=""/>
+ </hgroup>
+  </section>
+  <section>
+  <h1>Building an Elastic Load Balancer</h1>
+  <h2>Exercise: Create load balancer</h2>
+  <p></p>
+  <img src="images/load_balancer3.png" alt="" height="400" width="600"/>
+  </hgroup>
+  </section>
+  <section>
+  <h1>Building an Elastic Load Balancer</h1>
+  <h2>Exercise: Create load balancer</h2>
+  <p></p>
+  <img src="images/load_balancer4_annotated.png" alt="" height="400" width="600"/>
+  </hgroup>
+  </section>
+  <section>
+  <h1>Building an Elastic Load Balancer</h1>
+  <h2>Exercise: Create load balancer</h2>
+  <p></p>
+  <img src="images/load_balancer5.png" alt="" height="400" width="600"/>
+  </hgroup>
+  </section>
+  <section>
+  <h1>Building an Elastic Load Balancer</h1>
+  <h2>Exercise: Create load balancer</h2>
+  <p></p>
+  <img src="images/load_balancer6.png" alt="" />
+  </hgroup>
+  </section>
+  <section>
+  <h1>Building an Elastic Load Balancer</h1>
+  <h2>Exercise: Create load balancer</h2>
+  <p></p>
+  <img src="images/load_balancer7.png" alt=""height="400" width="800" />
+  </hgroup>
+  </section>
+  <section>
+  <h1>Deploying Autoscaling</h1>
+  <h2>Exercise: Autoscaling setup</h2>
+  <p>Currently there are only command-line tools, we will launch and AMI with the
+  necessary tools in the AWS Console</p>
+  <p>Use this AMI: ami-9b8143f2</p>
+  <p>In windows, zip up your keys in the ec2 directory</p>
+  <p>copy your keys (private key and cert) to the AMI</p>
+  <p>pscp -i ec2/[your key] ec2.zip ubuntu@[your ami]</p>
+  </hgroup>
+  </section>
+  <section>
+  <h1>Deploying Autoscaling</h1>
+  <h2>Exercise: Autoscaling setup </h2>
+  <p>Open a putty session after AMI is running</p>
+  <p>Login as ubuntu</p>
+  <p>Unzip ec2.zip:</p>
+  <p><code>unzip ec2.zip ec2</code></p>
+  </hgroup>
+  </section>
+  <section>
+  <h1>Deploying Autoscaling</h1>
+  <h2>Exercise: Create launch config and autoscaling group</h2>
+  <p><pre><code>as-create-launch-config asfoss4g --image-id ami-e975b680 \
+    --instance-type t1.micro \
+    --group default \
+    -K ~/ec2/pk-your_private_key.pem \
+    -C ~/ec2/cert-your_cert.pem<br><br>
+as-create-auto-scaling-group foss4ggroup \
+    --launch-configuration asfoss4g \
+    --availability-zones us-east-1a \
+    --min-size 3 \
+    --max-size 10 \
+    --load-balancers foss4gLoadBalancer \
+    -K ~/ec2/pk-your_private_key.pem \
+    -C ~/ec2/cert-/cert-your_cert.pem
+  </code></pre></p>
+  </hgroup>
+  </section>
+  <section>
+  <h1>Deploying Autoscaling</h1>
+  <h2>Exercise: Create scaling policy</h2>
+  <p><pre><code> as-put-scaling-policy ScaleUpPolicy \
+    --name "scale-up" \
+    --auto-scaling-group foss4ggroup \
+    --adjustment 1 \
+    --type Absolute \
+    --cooldown 300 \
+    -K ~/ec2/pk-your_private_key.pem \
+    -C ~/ec2/cert-/cert-your_cert.pem
+<br><br>
+ as-put-scaling-policy ScaleDownPolicy \
+    --name "scale-down" \
+    --auto-scaling-group foss4ggroup \
+    --adjustment -1 \
+    --type Absolute \
+    --cooldown 300 \
+    -K ~/ec2/pk-your_private_key.pem \
+    -C ~/ec2/cert-/cert-your_cert.pem
+ </code></pre></p>
+  </hgroup>
+  </section>
+  <section>
+  <h1>Deploying Autoscaling</h1>
+  <h2>Exercise: Create alarms</h2>
+  <p>exceeds 60% CPU utilization for 1 consecutive 10 min period</p>
+  <p><pre><code>
+  mon-put-metric-alarm HighCPUAlarm \
+    --comparison-operator GreaterThanThreshold \
+    --evaluation-periods 1 \
+    --metric-name CPUUtilization \
+    --namespace "AWS/EC2" \
+    --period 600 \
+    --statistic Average \
+    --threshold 60 \
+    --alarm-actions ScaleUpPolicy \
+    --dimensions "AutoScalingGroupName=foss4ggroup" \
+    -K ~/ec2/pk-your_private_key.pem \
+    -C ~/ec2/cert-/cert-your_cert.pem
+  </code></pre></p>
+  </hgroup>
+  </section>
+  <section>
+  <h1>Deploying Autoscaling</h1>
+  <h2>Exercise: Create alarms</h2>
+  <p>less than 10% CPU utilization for 1 consecutive 10 min period</p>
+  <p><pre><code>
+  mon-put-metric-alarm LowCPUAlarm \
+    --comparison-operator LessThanThreshold \
+    --evaluation-periods 1 \
+    --metric-name CPUUtilization \
+    --namespace "AWS/EC2" \
+    --period 600 \
+    --statistic Average \
+    --threshold 10 \
+    --alarm-actions ScaleDownPolicy \
+    --dimensions "AutoScalingGroupName=foss4ggroup" \
+    -K ~/ec2/pk-your_private_key.pem \
+    -C ~/ec2/cert-/cert-your_cert.pem
+  </code></pre></p>
+  </hgroup>
+  </section>
+  <section>
+  <h1>Stopping Autoscaling</h1>
+  <h2>Exercise: Stop autoscaling</h2>
+  <p>Stop alarms, clear policies, stop instances and groups</p>
+  <p><pre><code>
+  # replace with your cert and private key
+  mon-delete-alarms HighCPUAlarm LowCPUAlarm -K ec2/pk.pem -C ec2/cert.pem
+
+  as-update-auto-scaling-group foss4ggroup --min-size 0 --max-size 0 -K ec2/pk.pem -C ec2/cert.pem 
+
+  #  repeat describe until all instances are stopped
+  as-describe-auto-scaling-groups foss4ggroup -K ec2/pk.pem -C ec2/cert.pem
+
+  as-delete-auto-scaling-group foss4ggroup -K ec2/pk.pem -C ec2/cert.pem
+
+  as-delete-launch-config asfoss4g -K ec2/pk.pem -C ec2/cert.pem
+  </code></pre></p>
+  </hgroup>
+  </section>
   	<section>
       <hgroup>
         <h1>That's all</h1>
       </hgroup>
-      <p>Get it at <a href="http://github.com/robflaherty/html-slideshow">github</a>.</p>
-      <p>- Rob Flaherty / <a href="http://twitter.com/robflaherty">@robflaherty</a> / <a href="mailto:rob@ravelrumba.com">rob@ravelrumba.com</a></p>
+      <p>Restful break credit goes to Maru the Cat.</p>
+      <img src="images/Maru-The-Cat_1945144i.jpg" alt="kitteh break!"/>
+      <p>Get it at <a href="http://github.com/spara/aws_foss4g_2011">github</a>.</p>
+      <p>- Sophia Parafina / <a href="http://twitter.com/spara">@spara</a> / <a href="mailto:sophia.parafina@gmail.com">sophia.parafina@gmail.com</a></p>
     </section>
     <!-- /End slides -->
     

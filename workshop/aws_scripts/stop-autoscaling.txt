@@ -1,0 +1,12 @@
+# replace with your cert and private key
+
+mon-delete-alarms HighCPUAlarm LowCPUAlarm -K ec2/pk.pem -C ec2/cert.pem
+
+as-update-auto-scaling-group foss4ggroup --min-size 0 --max-size 0 -K ec2/pk.pem -C ec2/cert.pem 
+
+#  repeat describe until all instances are stopped
+as-describe-auto-scaling-groups foss4ggroup -K ec2/pk.pem -C ec2/cert.pem
+
+as-delete-auto-scaling-group foss4ggroup -K ec2/pk.pem -C ec2/cert.pem
+
+as-delete-launch-config asfoss4g -K ec2/pk.pem -C ec2/cert.pem
