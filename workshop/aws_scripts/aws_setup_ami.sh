@@ -39,22 +39,3 @@ sh -c "echo 'export PATH=$PATH:$AWS_AUTO_SCALING_HOME/bin' >> ~/.bash_profile"
 sh -c "echo 'export AWS_CLOUDWATCH_HOME=/home/ubuntu/cloudwatch/CloudWatch-1.0.12.1' >> ~/.bash_profile"
 sh -c "echo 'export PATH=$PATH:$AWS_CLOUDWATCH_HOME/bin' >> ~/.bash_profile"
 source .bash_profile
-
-as-create-launch-config foss4g --image-id ami-e975b680 \
-  --instance-type t1.micro \
-  --group default \
-  -K ~/keys/pk-LEDMQAI6WR2YZLNYCCJMKZXP2LSW7VBG.pem \
-  -C ~/keys/cert-LEDMQAI6WR2YZLNYCCJMKZXP2LSW7VBG.pem
-
-as-create-auto-scaling-group foss4ggroup \
-  --launch-configuration foss4g \
-  --availability-zones us-east-1a \
-  --min-size 3 \
-  --max-size 10 \
-  --load-balancers foss4gLoadBalancer \
-  -K ~/keys/pk-LEDMQAI6WR2YZLNYCCJMKZXP2LSW7VBG.pem \
-  -C ~/keys/cert-LEDMQAI6WR2YZLNYCCJMKZXP2LSW7VBG.pem
-
-
-
-
