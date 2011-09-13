@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  
+  <!--[if lt IE 9]>
+  <script src="../lib/html5shim.js"></script>
+  <![endif]-->  
+  
+  <!-- These are some core styles the slideshow app requires -->
+  <link rel="stylesheet" href="../lib/styles.css" />
+  
+  <!-- These are the styles you'll add to make the slides look great -->
+  <link rel="stylesheet" href="css/styles.css" />
+  
+  <title>Deploying Map Services on Amazon Web Services</title>
+</head>
+<body>
+  <header>
+    <h1>Deploying Map Services on Amazon Web Services</h1>
+    <nav>
+      <ul>
+        <li><button id="prev-btn" title="Previous slide">Previous Slide</button></li>
+        <li><span id="slide-number"></span>/<span id="slide-total"></span></li>
+        <li><button id="next-btn" title="Next Slide">Next Slide</button></li>
+      </ul>
+    </nav>
+  </header>
+  <div id="deck">
+    
+    <!-- Begin slides -->
+    <section>
+      <hgroup>
+        <h1>Deploying mapping services on AWS</h1>
+        <h2>What we will cover</h2>
+        <ul>
+          <li class="action"> Amazon Web Services basic concepts
+          <li class="action"> Amazon Web Services tools
+          <li class="action"> Deploying map services on AWS
+          <li class="action"> Building a custom Amazon Machine Image (AMI)
+          <li class="action"> Configuring and deploying a load balance cluster
+        </ul>
+     </hgroup>
+   </section>
+   <section>
+      <hgroup>
+        <h1>Key Concepts</h1>
+      </hgroup>
+      <ul>
+        <li class="action">Availability Zone</li>
+        <li class="action">Region</li>
+        <li class="action">Access Identifiers</li>
+        <li class="action">Amazon Machine Image</li>
+        <li class="action">Elastic IP Address</li>
+        <li class="action">Security Group</li>
+        <li class="action">Access Control List</li>
+      </ul>
+    </section>
+    <section>
+      <hgroup>
+        <h1>Key Concepts</h1>
+        <h2>Availability Zones</h2>
+      </hgroup>
+        <p>An Availability Zone is a set of locations within an AWS Region. Each
+    zone is independent from other zones to protect from failure.</p>
+        <p>The Region name is part of the zone name, eg:</p>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;us-east-1d</p>
+        <p>This is one of the four zones in the us-east-1 Region</p>
+        <p>The mapping of a zone name to a location is different and consistent
+    for each AWS account. This means that we maybe both be in zone us-east-1d
+    but they maybe in different locations.</p>
+   </section>
+   <section>
+      <hgroup>
+        <h1>Key Concepts</h1>
+        <h2>Region</h2>
+      </hgroup>
+        <p>A Region is a set of Availability Zones in a geographic area. The AWS
+    Region name generally indicates the area that is covered. The curent regions
+    are:</p>
+        <ul>
+          <li>eu-west-1	ec2.eu-west-1.amazonaws.com is in Ireland</li>
+          <li>us-east-1	ec2.us-east-1.amazonaws.com is in Virginia</li>
+          <li>ap-northeast-1	ec2.ap-northeast-1.amazonaws.com is in Japan</li>
+          <li>us-west-1	ec2.us-west-1.amazonaws.com is in California</li>
+          <li>ap-southeast-1	ec2.ap-southeast-1.amazonaws.com Singapore</li>
+       </ul>
+   </section>
+   <section>
+     <hgroup>
+       <h1>Key Concepts</h1>
+       <h2>Access Identifiers</h2>
+     </hgroup>
+     <p>Access identifiers are used to identify accounts and create a
+    signature for each request made.</p>
+     <p> Identifiers use public key encryption which come in pairs. The first
+    part is public and identifies a single AWS account. The second part is
+    private and used to create a signature for each request.</p>
+     <p>AWS provide two different sets of acces identifiers. The first is an
+    Access Key ID and a Secret Access Key. The second set is a X.509 certificate
+    with public and private keys.</p>
+    <p>More information on access and identity management on <a href="http://docs.amazonwebservices.com/IAM/latest/GettingStartedGuide/">Amazon</a></p>
+   </section>
+   <section>
+     <hgroup>
+       <h1>Key Concepts</h1>
+       <h2>Amazon Machine Image (AMI)</h2>
+     </hgroup>
+     <p>Amazon Machine Image is a virtual instance of a server. It contains the
+    operating system and software that comprise you application(s).</p>
+     <p>You can use a pre-built AMI, customize it, and create a new AMI based on
+    your changes</p>
+     <p>Each AMI has a unique id, eg: <code>ami-63be790a</code></p>
+     <p>The AWS AMI catalog contains a complete list of public and registered AMIs.</p>
+   </section>
+   <section>
+     <hgroup>
+       <h1>Key Concepts</h1>
+       <h2>Instance</h2>
+     </hgroup>
+     <p>An instance is a running copy of an AMI. You can launch multiple
+    instances of the same AMI. They can be managed through the command-line or
+    using the AWS Management Console through a web browser.</p>
+     <p>More info on instance types on <a href="http://aws.amazon.com/ec2/#instance">Amazon</a></p>
+   </section>
+   <section>
+     <hgroup>
+       <h1>Key Concepts</h1>
+       <h2>Elastic IP Address</h2>
+     </hgroup>
+     <p>AWS allocates fixed static addresses to each instance. They are elastic
+    because you can allocate, attach, detach and free addresses as needed</p>
+     <p>There is a limit of 5 Elastic IP Addresses per user</p>
+     <p>More info at <a href="http://aws.amazon.com/articles/1346">AWS Feature Guide</a></p>
+   </section>
+   <section>
+     <hgroup>
+       <h1>Key Concepts</h1>
+       <h2>Security Group</h2>
+     </hgroup>
+     <p>A security group is the allowed set of inbound network connection for
+    an instance. Each security group has a unique name and lists the protocols, ports,
+    and IP address ranges that are permitted.</p>
+     <p>A single group can be applied to multiple instances and multiple groups
+    can be applied to single instance.</p>
+     <p>Security groups typically permit access to ports 22 and 80 for access to
+    ssh and a webserver. Additional ports can be added to the security group
+    such as port 8080 for apache-tomcat or 5432 for postgres. In addition to
+    adding these ports to a security group, the application will also have to be
+    configured to accept external requests as needed.</p>
+     <p>More information in security groups are on <a
+    href="http://docs.amazonwebservices.com/AWSEC2/latest/UserGuide/">Amazon</a></p>
+   </section>
+   <section>
+     <hgroup>
+       <h1>Key Concepts</h1>
+       <h2>Access Control List</h2>
+     </hgroup>
+     <p>An Access Control List (ACL) specifies permissions for S3 buckets and
+    objects. Every bucket and object has an ACL that defines which AWS accounts
+    and groups that can access the object.</p>
+     <p>ACLs can be manage through the AWS Management Console or through a third
+    party application such as S3Fox</p>
+   </section>
+   <section>
+      <hgroup>
+        <h1>AWS Basics</h1>
+        <h2>Building Blocks</h2>
+      </hgroup>
+      <ul>
+        <li class="action">Simple Storage Service (S3)</li>
+        <li class="action">Elastic Block Store (EBS)</li>
+        <li class="action">Elastic Compute Cloud (EC2)</li>
+        <li class="action">Elastic Load Balancer</li>
+        <li class="action">CloudWatch and Auto Scaling</li>
+      </ul>
+    </section>
+   <section>
+      <hgroup>
+        <h1>Building Blocks</h1>
+        <h2>Simple Storage Service</h2>
+      </hgroup>
+      <p>S3 is used to store binary data objects for private or public use. It
+    is fault tolerant, assumes that hardware failure is common, and makes
+    multiple copies to achieve high availability and durability.</p>
+      <p>All objects reside in buckets and any single object has a 5gb
+    limit. You can have as many objects in a single bucket as needed</p>
+      <p>An S3 account can have 100 buckets.</p>
+      <p>You must have a globally unique bucket name and a key unique to that
+    bucket. For example:<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;http://my_awesome_mapserver.s3.amazonaws.com/hurricane_irene.tiff
+      </p>
+      <p> S3 is the place to store static files such as static pages,
+    javascript, imagery, and other media files.</p>
+      <p>S3 charges are based on amount of data stored, amount of data
+    transfered in and out, and the number of requests made</p>
+    </section>
+    <section>
+      <hgroup>
+        <h1>Building Blocks</h1>
+        <h2>Elastic Block Store (EBS)</h2>
+      </hgroup>
+      <p>An Elastic Block Store is a disk volume. You can attach it to any
+    running instance in the same Availability Zone.</p>
+      <p>Volumes are independent of any instance, that means they persist when
+    an instance is shutdown or terminated</p>
+      <p>EVS volumes are useful for storing application data such as database
+    tables.</p>
+      <p>Priced at a rate of $0.10 per allocated GB per month Amazon EBS also
+    charges $0.10 per 1 million I/O requests.</p>
+   </section>
+    <section>
+      <hgroup>
+        <h1>Building Blocks</h1>
+        <h2>Elastic Compute Cloud - Standard</h2>
+      </hgroup>
+      <p>EC2 is the infrastructure underlaying the ability to lauch AMIs</p>
+      <p>There are instances to meet the majority of needs through providing a
+    range of memory, processing power and local disk storage</p>
+      <ul>
+        <li>Standard Instances have memory to CPU ratios suitable for most
+    general purpose applications;
+          <ul>
+            <li>High-Memory instances offer larger memory sizes for high
+    throughput applications, including database and memory caching
+    applications</li>
+            <li>High-CPU instances have proportionally more CPU
+    resources than memory (RAM) and are well suited for compute-intensive
+    applications.</li>
+          </ul>
+        </li>
+      </ul>
+    </section>
+   <section>
+      <hgroup>
+        <h1>Building Blocks</h1>
+        <h2>Elastic Compute Cloud - Micro</h2>
+      </hgroup>
+      <ul>
+        <li>Micro instances provide a small amount of consistent CPU resources
+    and allow you to burst CPU capacity when additional cycles are
+    available. They are well suited for lower throughput applications and web
+    sites that consume significant compute cycles periodically.
+        <li>At steady state,
+    Micro instances receive a fraction of the compute resources that Small
+    instances do. Therefore, if your application has compute-intensive or steady
+    state needs, a Small instance (or larger, depending on your needs) is
+    recommended.</li>
+        <li>However, Micro instances can periodically burst up to 2 ECUs
+    (for short periods of time). This is double the number of ECUs available
+    from a Standard Small instance. Therefore, if you have a relatively low
+    throughput application or web site with an occasional need to consume
+    significant compute cycles using Micro instances is recommended.</li>
+      </ul>
+   </section>
+   <section>
+      <hgroup>
+        <h1>Building Blocks</h1>
+        <h2>Elastic Compute Cloud - Other</h2>
+      </hgroup>
+      <ul>
+        <li>Cluster Compute instances provide a very large amount of CPU
+    coupled with increased network performance making them well suited for High
+    Performance Compute (HPC) applications and other demanding network-bound
+    applications.</li>
+        <li>Cluster GPU instances provide general-purpose graphics processing
+    units (GPUs) with proportionally high CPU and increased network performance
+    making them well suited for applications benefitting from highly
+    parallelized processing, including HPC, rendering and media processing
+    applications.</li>
+      </ul>
+   </section>
+   <section>
+     <hgroup>
+       <h1>Building Blocks</h1>
+       <h2>Elastic Load Balancer</h2>
+     </hgroup>
+     <p>The Elastic Load Balancer distributes traffic across EC2 instances.</p>
+     <p>Instances can be in the same Availability Zone or scattered across
+    several zones in a Region</p>
+     <p>The Load Balancer checks the health of instances it manages and stops
+    sending traffic to unhealthy or non-responsive instances</p>
+     <p>The Load Balancer works well with stateless applications, such as OGC
+    Web Services or RESTful APIs</p>
+  </section>
+   <section>
+     <hgroup>
+       <h1>Building Blocks</h1>
+       <h2>Cloud Watch and Auto Scaling</h2>
+     </hgroup>
+     <p>CloudWatch is a feature that provides monitoring within EC2 by
+    collecting and storing performance information such as
+       <ul>
+         <li>CPU load average</li>
+         <li>disk I/O rate</li>
+         <li>network I/O rate</li>
+       </ul>
+     </p>
+     <p>Auto Scaling uses the data collected by CloudWatch to add instances as
+    demand increases and terminate them as demand decreases within an
+    auto scaling group</p>
+     <p>You can set triggers for adding or decreasing the number of instances by
+    using Auto Scaling</p> 
+  </section>
+   <section>
+     <hgroup>
+       <h1>Break</h1>
+       <h2>Question and Answer</h2>
+       <br>
+       <br>
+       <img src="images/maru1.jpg" alt="kitteh break!"/>
+     </hgroup>
+  </section>       
+  <section>
+    <hgroup>
+      <h1>Amazon Web Service Tools</h1>
+      <h2>Exercise 1: Creating Security Crendentials</h2>
+    </hgroup>
+    <p>PURPOSE: We will generate public and private keys for managing AWS components from
+    the command line.</p>
+    <ol>
+      <li>Log into the AWS Web Site.</li>
+      <li>Click on Your Account and select Security Credentials</li>
+      <li>Click the X.509 Certificates tab</li>
+    </ol>
+    <img src="images/security_credentials.png" alt="Security credentials
+    console"/>
+   </section>
+   <section>
+     <hgroup>
+       <h1>Amazon Web Service Tools</h1>
+       <h2>Exercise 1: Creating Security Crendentials (cont.)</h2>
+     </hgroup>
+     <ol>
+       <li>Make a directory called 'ec2' in your home directory</li>
+       <li>Click Create a New Certificate and download the certificate and private key files</li>
+     </ol>
+     <img src="images/x509-download.png" alt="Certificate downloads" width="300" height="400" />
+   </section>
+   <section>
+     <hgroup>
+       <h1>Amazon Web Service Tools</h1>
+       <h2>Exercise 2: Generate keypair using AWS Console</h2>
+     </hgroup>
+     <p>PURPOSE: Keypairs are needed to launch and log into instances.</p>
+     <ol>
+       <li>Log into the AWS Management Console and click on the Amazon EC2 tab.</li>
+       <li>Click on Key Pairs in the Navigation pane on the left.</li>
+     </ol>
+     <img src="images/aws_console_keypair.png" alt="AWS Console Keypair" width="800" height="400"/>
+   </section>
+   <section>
+     <hgroup>
+       <h1>Amazon Web Service Tools</h1>
+       <h2>Exercise 2: Generate keypair using AWS Console (cont.)</h2>
+     </hgroup>
+     <ul>
+       <li>Click on Create Key Pair, enter a name, and click Create</li>
+       <li>The key pair will be downloaded automatically, move to your ec2
+    directory.</li>
+       <li> On Unix based systems, change permissions to 600</li>
+     </ul>
+     <br>
+     <br>
+     <table>
+       <tr>
+         <td><img src="images/create-keypair.png" alt="Create keypair"
+    style="float:left;"/></td>
+         <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+         <td><img src="images/download-keypair.png" alt="Download keypair"
+    style="float:right;"/></td>
+       </tr>
+     </table>
+  </section>
+   <section>
+     <hgroup>
+       <h1>Amazon Web Service Tools</h1>
+       <h2>Exercise 3: Creating a Security Group</h2>
+     </hgroup>
+    <ul>
+       <li>Select Security Groups</li>
+       <li>Select Default Rule</li>
+       <li>Create a new rule</li>
+       <li>Set port range (8080)</li>
+       <li>Click Add Rule</li>
+     </ul>
+   </section>
+   <section>
+     <hgroup>
+       <h1>Amazon Web Service Tools</h1>
+       <h2>Exercise 3: Creating a Security Group</h2>
+     </hgroup>
+     <img src="images/security_console.png" alt="Security console"/>
+  </section>
+  <section>
+     <hgroup>
+       <h1>Amazon Web Service Tools</h1>
+       <h2>Exercise 4: Launching an EC2 instance</h2>
+     </hgroup>
+     <ul>
+       <li>Log in the AWS Management Console and click the Amazon EC2 tab.</li>
+       <li>Click on AMIs in the Navigation side menu.</li>
+       <li>In the Amazon Machine Images pane, select Public Images and All
+    Platforms in the drop down menus.</li>
+       <li>Copy and paste the Ubuntu 10.04 LTS Lucid EBS boot AMI: ami-63be790a</li>
+     </ul>
+     <img src="images/launch_instance.png" alt="Launch instance"/>
+   </section>
+   <section>
+     <hgroup>
+       <h1>Amazon Web Service Tools</h1>
+       <h2>Exercise 4: Launching an EC2 instance (cont.)</h2>
+     </hgroup>
+     <p></p>
+     <ul>
+       <li>To launch the instance, select the check box and click on the Launch button.</li>
+     </ul>
+      <img src="images/launch_instance.png" alt="Request instant wizard"/>
+   </section>
+   <section>
+     <hgroup>
+       <h1>Amazon Web Service Tools</h1>
+       <h2>Exercise 4: Launching an EC2 instance (cont.)</h2>
+     </hgroup>
+    <ul>
+       <li>Enter 1 in the Number of Instances field.</li>
+       <li>Select the m1.small Instance Type option.</li>
+       <li>Select the Availability Zone</li>
+     </ul>
+      <img src="images/request_instances_wizard.png" alt="Select number of instances"/>
+   </section>
+   <section>
+     <hgroup>
+       <h1>Amazon Web Service Tools</h1>
+       <h2>Exercise 4: Launching an EC2 instance (cont.)</h2>
+     </hgroup>
+     <ul>
+       <li>Review selected options.</li>
+     </ul>
+     <p>
+      <img src="images/number_instance.png" alt="Review selected options"/>
+   </section>
+   </section>
+   <section>
+     <hgroup>
+       <h1>Amazon Web Service Tools</h1>
+       <h2>Exercise 4: Launching an EC2 instance (cont.)</h2>
+     </hgroup>
+    <ul>
+       <li>Name the instance</li>
+     </ul>
+     <p>
+      <img src="images/instance_name.png" alt="Name the instance"/>
+   </section>
+  <section>
+     <hgroup>
+       <h1>Amazon Web Service Tools</h1>
+       <h2>Exercise 4: Launching an EC2 instance (cont.)</h2>
+     </hgroup>
+    <ul>
+       <li>Select keypair to use with the instance, you will use this to login</li>
+     </ul>
+     <p>
+      <img src="images/instance_keypair.png" alt="Select the keypair"/>
+   </section>
+   <section>
+     <hgroup>
+       <h1>Amazon Web Service Tools</h1>
+       <h2>Exercise 4: Launching an EC2 instance (cont.)</h2>
+     </hgroup>
+    <ul>
+       <li>Select the Security Group</li>
+     </ul>
+     <p>
+      <img src="images/instance_security.png" alt="Name the instance"/>
+   </section>
+  <section>
+     <hgroup>
+       <h1>Amazon Web Service Tools</h1>
+       <h2>Exercise 4: Launching an EC2 instance (cont.)</h2>
+     </hgroup>
+    <ul>
+       <li>Launch the instance</li>
+     </ul>
+      <img src="images/instance_finish.png" alt="Name the instance"/>
+   </section>
+   <section>
+     <hgroup>
+       <h1>Break</h1>
+       <h2>Question and Answer</h2>
+       <br>
+       <br>
+       <img src="images/maru-20090425-125127.jpg" alt="kitteh break!"/>
+     </hgroup>
+   </section>
+   <section>
+     <hgroup>
+       <h1>Deploying Mapping Services</h1>
+       <h2>Intro</h2>
+     </hgroup>
+     <p>Using geoserver as an example, but can be any map or data service</p>
+     <p>We will make heavy use of bash scripting, but can be in any scripting
+    language</p>
+     <p>Goal is to automate the build out of servers</p>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Mapping Services</h1>
+  <h2>Setting up the environment</h2>
+  <pre><code>
+  # add ubuntu repos and update
+  sudo sh -c "echo ' ' >> /etc/apt/sources.list"
+  sudo sh -c "echo 'deb http://us.archive.ubuntu.com/ubuntu/ lucid multiverse' >> /etc/apt/sources.list"
+  sudo sh -c "echo 'deb-src http://us.archive.ubuntu.com/ubuntu/ lucid multiverse' >> /etc/apt/sources.list"
+  sudo sh -c "echo 'deb http://us.archive.ubuntu.com/ubuntu/ lucid-updates multiverse' >> /etc/apt/sources.list"
+  sudo sh -c "echo 'deb-src http://us.archive.ubuntu.com/ubuntu/ lucid-updates multiverse' >> /etc/apt/sources.list"
+  sudo sh -c "echo 'deb http://archive.canonical.com/ lucid partner' >> /etc/apt/sources.list"
+  sudo apt-get update
+  </code></pre>
+  </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Mapping Services</h1>
+  <h2>Install and configure Java</h2>
+  <pre>
+  <code>
+  # magic! installs java without physically accepting license
+  echo "sun-java6-jdk shared/accepted-sun-dlj-v1-1 boolean true" | sudo -E debconf-set-selections
+
+  # install Oracle Java
+  sudo apt-get -y install sun-java6-bin
+  
+  # set java paths
+  sudo touch /etc/profile.d/java.sh
+  sudo sh -c "echo 'export JAVA_HOME=/usr/lib/jvm/java-6-sun' >> /etc/profile.d/java.sh"
+  sudo sh -c "echo 'export PATH=$PATH:$JAVA_HOME/bin' >> /etc/profile.d/java.sh"
+  sudo source /etc/profile.d/java.sh
+  export JAVA_HOME=/usr/lib/jvm/java-6-sun
+  export PATH=$PATH:$JAVA_HOME/bin
+  </code>
+  </pre>
+  </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Mapping Services</h1>
+  <h2>Install and configure Apache and Tomcat</h2>
+  <pre>
+  <code>
+  #install and configure tomcat6
+  sudo apt-get install -y tomcat6
+  sudo chgrp -R tomcat6 /etc/tomcat6
+  sudo chmod -R g+w /etc/tomcat6
+
+  # install and configure apache
+  sudo apt-get install -y apache2
+  sudo ln -s /etc/apache2/mods-available/proxy.conf /etc/apache2/mods-enabled/proxy.conf
+  sudo ln -s /etc/apache2/mods-available/proxy.load /etc/apache2/mods-enabled/proxy.load
+  sudo ln -s /etc/apache2/mods-available/proxy_http.load /etc/apache2/mods-enabled/proxy_http.load
+  </code>
+  </pre>
+  </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Mapping Services</h1>
+  <h2>Configure Tomcat proxy</h2>
+  <pre>
+  <code>
+  #add tomcat proxy
+  sudo chmod 666 /etc/apache2/sites-available/default
+  sudo sed -i '$d'  /etc/apache2/sites-available/default
+  sudo sh -c "echo ' ' >> /etc/apache2/sites-available/default"
+  sudo sh -c "echo 'ProxyRequests Off' >> /etc/apache2/sites-available/default"
+  sudo sh -c "echo '# Remember to turn the next line off if you are proxying to a NameVirtualHost' >> /etc/apache2/sites-available/default"
+  sudo sh -c "echo 'ProxyPreserveHost On' >> /etc/apache2/sites-available/default"
+  sudo sh -c "echo ' ' >> /etc/apache2/sites-available/default"
+  sudo sh -c "echo '<Proxy *>' >> /etc/apache2/sites-available/default"
+  sudo sh -c "echo '    Order deny,allow' >> /etc/apache2/sites-available/default"
+  sudo sh -c "echo '    Allow from all' >> /etc/apache2/sites-available/default"
+  sudo sh -c "echo '</Proxy>' >> /etc/apache2/sites-available/default"
+  sudo sh -c "echo ' ' >> /etc/apache2/sites-available/default"
+  sudo sh -c "echo 'ProxyPass /geoserver http://localhost:8080/geoserver' >> /etc/apache2/sites-available/default"
+  sudo sh -c "echo 'ProxyPassReverse /geoserver http://localhost:8080/geoserver' >> /etc/apache2/sites-available/default"
+  sudo sh -c "echo ' ' >> /etc/apache2/sites-available/default"
+  sudo sh -c "echo '</VirtualHost>' >> /etc/apache2/sites-available/default"
+  sudo chmod 644 /etc/apache2/sites-available/default
+  </code>
+  </pre>
+  </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Mapping Services</h1>
+  <h2>Installing Geoserver</h2>
+  <pre><code>
+  # get geoserver, change to version you want
+  sudo service tomcat6 stop
+  sudo apt-get -y install curl
+  sudo apt-get -y install unzip
+  curl -L http://downloads.sourceforge.net/geoserver/geoserver-2.1.1-war.zip -o geoserver-2.1.1-war.zip
+  sudo unzip -d /var/lib/tomcat6/webapps/ geoserver-2.1.1-war.zip
+  sudo chown -R tomcat6 /var/lib/tomcat6/webapps/geoserver.war
+  sudo chgrp g+w tomcat6 /var/lib/tomcat6/webapps/geoserver.war
+
+  # restart
+  sudo service tomcat6 restart
+  sudo service apache2 restart
+
+  # echo message
+  addy=$(GET http://169.254.169.254/latest/meta-data/public-hostname)
+  echo " "
+  echo "Geoserver is available at: http://$addy/geoserver"
+  </code></pre>
+  </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Mapping Services</h1>
+  <h2>Installing PostgreSQL and PostGIS</h2>
+  <p>Installing PostgreSQL/PostGIS is optional<br><br>
+  This section creates a RAID 10 using EBS Volumes and installs PostgreSQL
+  and PostGIS from source.<br><br>
+  Major props to Simon Tokumine (@tokumin) who wrote the original script
+  </p>
+  </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Mapping Services</h1>
+  <h2>Installing PostgreSQL and PostGIS Setup</h2>
+  <p>Installing PostgreSQL/PostGIS is optional</p>
+  <ul>
+    <li>Start a new AMI instance</li>
+    <li>Copy your keys to the instance</li>
+    <li>chmod 600 *.pem</p>
+  </ul>
+ </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Mapping Services</h1>
+  <h2>Setup</h2>
+  <pre><code>
+  # change this to you keypair and cert
+  export EC2_PRIVATE_KEY=[pk.pem]
+  export EC2_CERT=[cert.pem]
+
+  # change this to your instance
+  instanceid=$(GET http://169.254.169.254/latest/meta-data/instance-id)
+
+  # change to the instance's availability zone
+  availability_zone=$(GET http://169.254.169.254/latest/meta-data/placement/availability-zone)
+  </code></pre>
+  </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Mapping Services</h1>
+  <h2>Setup</h2>
+  <pre><code>
+  # builds out RAID10, so size of RAID=volumes*size/2
+  volumes=$1
+  size=$2
+
+  # change to your mount point
+  mountpoint=/mnt/vol1
+
+  # change to a device
+  raid_array_location=/dev/md0
+  raid_level=10
+  raid_layout=f2
+  raid_chunk=256
+  postgres_password=postgres
+
+  # create a postgis template
+  db_name=template_postgis
+  </code></pre>
+  </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Mapping Services</h1>
+  <h2>Create EBS Volumes</h2>
+  <pre><code>
+  # install ec2 tools
+  sudo apt-get -y install ec2-api-tools
+
+  # create EBS volumes
+  devices=$(perl -e 'for$i("h".."k"){for$j("",1..15){print"/dev/sd$i$j\n"}}'|
+  head -$volumes)
+  devicearray=($devices)
+  volumeids=
+  i=1
+  while [ $i -le $volumes ]; do
+    volumeid=$(ec2-create-volume -z $availability_zone --size $size | cut -f2)
+    echo "$i: created $volumeid"
+    device=${devicearray[$(($i-1))]}
+    echo $volumeid
+    ec2-attach-volume $volumeid -i $instanceid -d $device
+    volumeids="$volumeids $volumeid"
+    let i=i+1
+  done
+  echo "volumeids='$volumeids'"
+ </code></pre>
+  </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Mapping Services</h1>
+  <h2>Create EBS Volumes</h2>
+  <pre><code>
+  # install mdadm - software raid utility
+  sudo apt-get update 
+  echo "postfix	postfix/main_mailer_type select	No configuration" | sudo -E debconf-set-selections
+  sudo apt-get install -y mdadm xfsprogs
+
+  # get list of devices
+  devices=$(perl -e 'for$i("h".."k"){for$j("",1..15){print"/dev/sd$i$j\n"}}'|
+  head -$volumes)
+  </code></pre>
+  </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Mapping Services</h1>
+  <h2>Create RAID 10</h2>
+  <pre><code>
+  #builds out RAID10
+  yes | sudo mdadm \
+    --create $raid_array_location \
+    --chunk=$raid_chunk \
+    --level=$raid_level \
+    --layout=$raid_layout \
+    --metadata=1.1 \
+    --raid-devices $volumes \
+    $devices
+
+  echo DEVICE $devices | sudo tee /etc/mdadm.conf
+  sudo mdadm --detail --scan | sudo tee -a /etc/mdadm.conf
+
+  # create xfs file system on RAID 10
+  sudo mkfs.xfs $raid_array_location
+
+  # add to fstab, create mountpoint and mount it
+  echo "$raid_array_location $mountpoint xfs noatime 0 0" | sudo tee -a /etc/fstab
+  sudo mkdir $mountpoint
+  sudo mount $mountpoint
+  </code></pre>
+  </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Mapping Services</h1>
+  <h2>Install PostgeSQL on RAID</h2>
+  <pre><code>
+  # install PostgreSQL
+  sudo apt-get -y install libxml2-dev
+  sudo apt-get -y install postgresql-8.4 postgresql-server-dev-8.4 postgresql-contrib-8.4 libpq-dev
+  sudo /etc/init.d/postgresql-8.4 stop
+
+  # move data director to RAID
+  sudo mkdir $mountpoint/data
+  sudo chmod -R 700 $mountpoint/data
+  sudo chown -R postgres.postgres $mountpoint/data
+  sudo -u postgres /usr/lib/postgresql/8.4/bin/initdb -D $mountpoint/data
+  sudo sed -i.bak -e 's/port = 5433/port = 5432/' /etc/postgresql/8.4/main/postgresql.conf
+  sudo sed -i.bak -e "s@\/var\/lib\/postgresql\/8.4\/main@$mountpoint\/data@" /etc/postgresql/8.4/main/postgresql.conf
+  sudo sed -i.bak -e 's/ssl = true/#ssl = true/' /etc/postgresql/8.4/main/postgresql.conf
+  sudo /etc/init.d/postgresql start
+  </code></pre>
+  </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Mapping Services</h1>
+  <h2>More setup, install utilities</h2>
+  <pre><code>
+  cd /tmp
+  sudo apt-get -y install bzip2
+  sudo apt-get -y install g++
+  sudo apt-get -y install checkinstall
+  </code></pre>
+  </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Mapping Services</h1>
+  <h2>Install GEOS</h2>
+  <pre><code>
+  wget http://download.osgeo.org/geos/geos-3.2.2.tar.bz2
+  bunzip2 geos-3.2.2.tar.bz2
+  tar xvf geos-3.2.2.tar
+  sudo chown -R ubuntu.ubuntu /tmp/geos-3.2.2
+  cd geos-3.2.2
+  ./configure
+  make 
+  sudo make install
+  </code></pre>
+  </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Mapping Services</h1>
+  <h2>Install Proj4</h2>
+  <pre><code>
+  cd ../
+  wget http://download.osgeo.org/proj/proj-4.7.0.tar.gz
+  tar xvfz proj-4.7.0.tar.gz
+  cd proj-4.7.0
+  ./configure
+  make 
+  sudo make install
+  cd ../
+  </code></pre>
+  </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Mapping Services</h1>
+  <h2>Install PostGIS</h2>
+  <pre><code>
+  # install postgis 
+  wget http://postgis.refractions.net/download/postgis-1.5.3.tar.gz
+  tar xvfz postgis-1.5.3.tar.gz
+  cd postgis-1.5.3
+  ./configure
+  make 
+  sudo make install
+  sudo /sbin/ldconfig
+
+  # config template_postgis
+  sudo -u postgres psql -c"ALTER user postgres WITH PASSWORD '$postgres_password'"
+  sudo -u postgres createdb $db_name
+  sudo -u postgres createlang -d$db_name plpgsql
+  sudo -u postgres psql -d$db_name -f /usr/share/postgresql/8.4/contrib/postgis-1.5/postgis.sql
+  sudo -u postgres psql -d$db_name -f /usr/share/postgresql/8.4/contrib/postgis-1.5/spatial_ref_sys.sql
+  sudo -u postgres psql -d$db_name -c"select postgis_lib_version();"
+  </code></pre>
+  </hgroup>
+  </section>
+   <section>
+     <hgroup>
+       <h1>Break</h1>
+       <h2>Question and Answer</h2>
+       <br>
+       <br>
+       <img src="images/maru1.jpg" alt="kitteh break!"/>
+     </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Map Services</h1>
+  <h2>Exercise: Housekeeping </h2>
+  <p>Download putty (ssh for windows)from here:<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html<br>
+  Get this version: putty-0.61-installer.exe</p>
+  <p>Download pscp (scp for windows)<br>
+  Get this version: pscp.exe</p>
+ </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Map Services</h1>
+  <h2>Exercise: Housekeeping </h2>
+  <p>Putty (ssh for windows) requires a different certificate. We will use
+  puttygen to create it. </p>
+  <p>Load your private key: File > Load</>
+  <p>Click OK</p>
+  <img src="images/puttygen1_annotated.png" alt="Screen 1"/>
+  </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Map Services</h1>
+  <h2>Exercise: Creating Certificates (cont.) </h2>
+  <p>Click Save Private Key </p>
+  <img src="images/puttygen2_annotated.png" alt="Screen 2"/>
+  </hgroup>
+  </section>
+
+  <section>
+  <hgroup>
+  <h1>Deploying Map Services</h1>
+  <h2>Exercise: Creating Certificates (cont.) </h2>
+  <p>Click Yes when PuTTYgen prompts you about saving the key without a
+  passphrase.</p>
+  <p>Save the key as &lt;keyname&gt;.ppk</p>
+  <img src="images/puttygen3_annotated.png" alt="Screen 3"/>
+  </hgroup>
+  </section>
+
+  <section>
+  <hgroup>
+  <h1>Deploying Map Services</h1>
+  <h2>Exercise: Logging in (cont.) </h2>
+  <p>Launch Putty to open an SSH session. Expand connection, SSH, and select Auth. Click the browse
+  button next to the Private key file for authentication: field, and select the
+  .PPK file you just created with Puttygen.</p>
+  <img src="images/putty1_annotated.png" alt="Screen 3"/>
+  </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Map Services</h1>
+  <h2>Exercise: Logging in (cont.) </h2>
+  <p>Select Session &gt; Enter the instance address &gt; Click Open </p>
+  <img src="images/putty2_annotated.png" alt="Screen 3"/>
+  </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Map Services</h1>
+  <h2>Exercise: Logging in (cont.) </h2>
+  <p>Login as ubuntu </p>
+  <img src="images/putty3_annotated.png" alt="Screen 3"/>
+  </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Map Services</h1>
+  <h2>Exercise: Installing Geoserver </h2>
+  <p><pre>
+  wget https://raw.github.com/spara/aws_foss4g_2011/master/workshop/aws_scripts/geoserver-ubuntu-aws-install.sh
+
+  chmod 755 geoserver-ubuntu-aws-install.sh 
+
+  ./geoserver-ubuntu-aws-install.sh 
+  </pre></p>
+  </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Deploying Map Services</h1>
+<h2>Optional Exercise: Installing Postgres/PostGIS </h2>
+  <p><pre>
+  wget https://raw.github.com/spara/aws_foss4g_2011/master/workshop/aws_scripts/postgres_postgis_aws_install.sh
+
+  chmod 755 postgres_postgis_aws_install.sh
+
+  ./postgres_postgis_aws_install.sh
+  </pre></p>
+  </hgroup>
+  </section>
+  <section>
+    <hgroup>
+      <h1>Break</h1>
+      <h2>Question and Answer</h2>
+      <br>
+      <br>
+      <img src="images/maru the japanese cat.jpg" alt="kitteh break!"/>
+     </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Building an Amazon Machine Image</h1>
+  <h2>Exercise: Create image</h2>
+  <p></p>
+  <img src="images/bundle1_annotated.png" alt=""/>
+  </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Building an Amazon Machine Image</h1>
+  <h2>Exercise: Create image</h2>
+  <p></p>
+  <img src="images/bundle2_annotated.png" alt=""/>
+ </hgroup>
+  </section>
+  <section>
+  <hgroup>
+  <h1>Building an Amazon Machine Image</h1>
+  <h2>Exercise: Create image</h2>
+  <p></p>
+  <img src="images/bundle3.png" alt=""/>
+  </hgroup>
+  </section>
+  <section>
+  <h1>Building an Amazon Machine Image</h1>
+  <h2>Exercise: Launch image x 3</h2>
+  <p></p>
+  <img src="images/bundle4_annotated.png" alt=""/>
+ </hgroup>
+  </section>
+  <section>
+  <h1>Building an Elastic Load Balancer</h1>
+  <h2>Exercise: Create a load balancer</h2>
+  <p></p>
+  <img src="images/load_balancer1_annotated.png" alt=""/>
+ </hgroup>
+  </section>
+  <section>
+  <h1>Building an Elastic Load Balancer</h1>
+  <h2>Exercise: Create a load balancer</h2>
+  <p></p>
+  <img src="images/load_balancer2_annotated.png" alt=""/>
+ </hgroup>
+  </section>
+  <section>
+  <h1>Building an Elastic Load Balancer</h1>
+  <h2>Exercise: Create a load balancer</h2>
+  <p></p>
+  <img src="images/load_balancer3.png" alt="" height="400" width="600"/>
+  </hgroup>
+  </section>
+  <section>
+  <h1>Building an Elastic Load Balancer</h1>
+  <h2>Exercise: Create a load balancer</h2>
+  <p></p>
+  <img src="images/load_balancer4_annotated.png" alt="" height="400" width="600"/>
+  </hgroup>
+  </section>
+  <section>
+  <h1>Building an Elastic Load Balancer</h1>
+  <h2>Exercise: Create a load balancer</h2>
+  <p></p>
+  <img src="images/load_balancer5.png" alt="" height="400" width="600"/>
+  </hgroup>
+  </section>
+  <section>
+  <h1>Building an Elastic Load Balancer</h1>
+  <h2>Exercise: Create a load balancer</h2>
+  <p></p>
+  <img src="images/load_balancer6.png" alt="" />
+  </hgroup>
+  </section>
+  <section>
+  <h1>Building an Elastic Load Balancer</h1>
+  <h2>Exercise: Create a load balancer</h2>
+  <p></p>
+  <img src="images/load_balancer7.png" alt=""height="400" width="800" />
+  </hgroup>
+  </section>
+  <section>
+  <h1>Deploying Autoscaling</h1>
+  <h2>Exercise: Autoscaling setup</h2>
+  <p>Currently there are only command-line tools for creating autoscaling
+  policies. We will use an AMI with the necessary tools preloaded.</p>
+  <p>Use this AMI: ami-9b8143f2</p>
+  <p>In windows, zip up your keys in the ec2 directory</p>
+  <p>copy your keys (private key and cert) to the AMI</p>
+  <p>pscp -i ec2/[your key] ec2.zip ubuntu@[your ami]:/home/ubuntu/ec2.zip</p>
+  </hgroup>
+  </section>
+  <section>
+  <h1>Deploying Autoscaling</h1>
+  <h2>Exercise: Autoscaling setup </h2>
+  <p>Open a putty session after AMI is running</p>
+  <p>Login as ubuntu</p>
+  <p>Unzip ec2.zip:</p>
+  <p><code>unzip ec2.zip ec2<br>
+  chmod 600 ec2/*.pem</code></p>
+  </hgroup>
+  </section>
+  <section>
+  <h1>Deploying Autoscaling</h1>
+  <h2>Exercise: Create launch config and autoscaling group</h2>
+  <p><pre><code>as-create-launch-config asfoss4g --image-id ami-e975b680 \
+    --instance-type t1.micro \
+    --group default \
+    -K ~/ec2/pk-your_private_key.pem \
+    -C ~/ec2/cert-your_cert.pem<br><br>
+as-create-auto-scaling-group foss4ggroup \
+    --launch-configuration asfoss4g \
+    --availability-zones us-east-1a \
+    --min-size 3 \
+    --max-size 10 \
+    --load-balancers foss4gLoadBalancer \
+    -K ~/ec2/pk-your_private_key.pem \
+    -C ~/ec2/cert-/cert-your_cert.pem
+  </code></pre></p>
+  </hgroup>
+  </section>
+  <section>
+  <h1>Deploying Autoscaling</h1>
+  <h2>Exercise: Create scaling policy</h2>
+  <p><pre><code> as-put-scaling-policy ScaleUpPolicy \
+    --name "scale-up" \
+    --auto-scaling-group foss4ggroup \
+    --adjustment 1 \
+    --type ChangeInCapacity \
+    --cooldown 300 \
+    -K ~/ec2/pk-your_private_key.pem \
+    -C ~/ec2/cert-/cert-your_cert.pem
+<br><br>
+ as-put-scaling-policy ScaleDownPolicy \
+    --name "scale-down" \
+    --auto-scaling-group foss4ggroup \
+    --adjustment -1 \
+    --type ChangeInCapacity \
+    --cooldown 300 \
+    -K ~/ec2/pk-your_private_key.pem \
+    -C ~/ec2/cert-/cert-your_cert.pem
+ </code></pre></p>
+  </hgroup>
+  </section>
+  <section>
+  <h1>Deploying Autoscaling</h1>
+  <h2>Exercise: Create alarms</h2>
+  <p>exceeds 60% CPU utilization for 1 consecutive 10 min period</p>
+  <p><pre><code>
+  mon-put-metric-alarm HighCPUAlarm \
+    --comparison-operator GreaterThanThreshold \
+    --evaluation-periods 1 \
+    --metric-name CPUUtilization \
+    --namespace "AWS/EC2" \
+    --period 600 \
+    --statistic Average \
+    --threshold 60 \
+    --alarm-actions ScaleUpPolicy \
+    --dimensions "AutoScalingGroupName=foss4ggroup" \
+    -K ~/ec2/pk-your_private_key.pem \
+    -C ~/ec2/cert-/cert-your_cert.pem
+  </code></pre></p>
+  </hgroup>
+  </section>
+  <section>
+  <h1>Deploying Autoscaling</h1>
+  <h2>Exercise: Create alarms</h2>
+  <p>less than 10% CPU utilization for 1 consecutive 10 min period</p>
+  <p><pre><code>
+  mon-put-metric-alarm LowCPUAlarm \
+    --comparison-operator LessThanThreshold \
+    --evaluation-periods 1 \
+    --metric-name CPUUtilization \
+    --namespace "AWS/EC2" \
+    --period 600 \
+    --statistic Average \
+    --threshold 10 \
+    --alarm-actions ScaleDownPolicy \
+    --dimensions "AutoScalingGroupName=foss4ggroup" \
+    -K ~/ec2/pk-your_private_key.pem \
+    -C ~/ec2/cert-/cert-your_cert.pem
+  </code></pre></p>
+  </hgroup>
+  </section>
+  <section>
+  <h1>Deploying Autoscaling</h1>
+  <h2>Exercise: Deploy autoscaling</h2>
+  <p>edit autoscaling.sh</p>
+  <ul>
+    <li>add your private key and cert</li>
+    <li>add geoserver_ami</li>
+    <li>add loadbalancer name</li>
+  </ul>
+  <br>
+  <p>run autoscaling.sh<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;./autoscale.sh
+  </p>
+  </hgroup>
+  </section>
+  <section>
+  <h1>Stopping Autoscaling</h1>
+  <h2>Exercise: Stop autoscaling</h2>
+  <p>Stop alarms, clear policies, stop instances and groups</p>
+  <p><pre><code>
+  # replace with your cert and private key
+  mon-delete-alarms HighCPUAlarm LowCPUAlarm -K ec2/pk.pem -C ec2/cert.pem
+
+  as-update-auto-scaling-group foss4ggroup --min-size 0 --max-size 0 -K ec2/pk.pem -C ec2/cert.pem 
+
+  #  repeat describe until all instances are stopped
+  as-describe-auto-scaling-groups foss4ggroup -K ec2/pk.pem -C ec2/cert.pem
+
+  as-delete-auto-scaling-group foss4ggroup -K ec2/pk.pem -C ec2/cert.pem
+
+  as-delete-launch-config asfoss4g -K ec2/pk.pem -C ec2/cert.pem
+  </code></pre></p>
+  </hgroup>
+  </section>
+  	<section>
+      <hgroup>
+        <h1>That's all</h1>
+      </hgroup>
+      <p>Restful break credit goes to Maru the Cat.</p>
+      <img src="images/Maru-The-Cat_1945144i.jpg" alt="kitteh break!"/>
+      <p>Get it at <a href="http://github.com/spara/aws_foss4g_2011">github</a>.</p>
+      <p>- Sophia Parafina / <a href="http://twitter.com/spara">@spara</a> / <a href="mailto:sophia.parafina@gmail.com">sophia.parafina@gmail.com</a></p>
+    </section>
+    <!-- /End slides -->
+    
+  </div>
+  <!-- /deck -->
+  <script src="../lib/jquery-1.5.2.min.js"></script>
+  <script src="../lib/jquery.jswipe-0.1.2.js"></script>  
+  <script src="../lib/htmlSlides.js"></script>
+  <script>
+    //Do our business when the DOM is ready for us
+    $(function() {
+      
+      //You can trigger Javascript based on the slide number like this:
+      $('html').bind('newSlide', function(e, id) { 
+        switch(id) {
+          case 2:
+            console.log('This is the second slide.');;
+            break;
+          case 3:
+            console.log('Hello, third slide.');
+            break;
+        }
+      });
+
+      //One little option: hideToolbar (boolean; default = false)
+      htmlSlides.init({ hideToolbar: true });
+      
+    });
+  </script>
+  </body>
+</html>
