@@ -30,6 +30,14 @@
 #
 # NOTE, THIS IS ONLY FOR TESTING
 ################################################################
+# setup sources 
+sudo sh -c "echo ' ' >> /etc/apt/sources.list"
+sudo sh -c "echo 'deb http://us.archive.ubuntu.com/ubuntu/ lucid multiverse' >> /etc/apt/sources.list"
+sudo sh -c "echo 'deb-src http://us.archive.ubuntu.com/ubuntu/ lucid multiverse' >> /etc/apt/sources.list"
+sudo sh -c "echo 'deb http://us.archive.ubuntu.com/ubuntu/ lucid-updates multiverse' >> /etc/apt/sources.list"
+sudo sh -c "echo 'deb-src http://us.archive.ubuntu.com/ubuntu/ lucid-updates multiverse' >> /etc/apt/sources.list"
+sudo sh -c "echo 'deb http://archive.canonical.com/ lucid partner' >> /etc/apt/sources.list"
+sudo apt-get update
 
 ################################################################
 #SETUP
@@ -157,7 +165,7 @@ cd ../
 # install postgis 
 wget http://postgis.refractions.net/download/postgis-1.5.3.tar.gz
 tar xvfz postgis-1.5.3.tar.gz
-cd postgis-1.5.3
+cd postgis-1.5.3	
 ./configure
 make 
 #sudo checkinstall --pkgname postgis --pkgversion 1.5.2-src --default # remove with dpkg -r postgis
